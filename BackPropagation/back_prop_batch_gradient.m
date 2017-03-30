@@ -45,7 +45,7 @@ function [nn_, err_hist, it] = back_prop_batch_gradient(train_set, target, nn, t
 
     delta_w = train_par.alpha*derror_dw + train_par.beta*delta_w_past;
     delta_v = train_par.alpha*derror_dv + train_par.beta*delta_v_past;
-
+    
     nn_.w = nn_.w - delta_w;
     nn_.v = nn_.v - delta_v;
       

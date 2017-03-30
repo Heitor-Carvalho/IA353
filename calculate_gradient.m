@@ -24,6 +24,4 @@ function [derror_dv, derror_dw, mse_error] = calculate_gradient(train_set, targe
                  repmat(in_bias, 1, nn.mid_sz);
   derror_dv = mean(derror_dv, 3);
 
-  
-
 end

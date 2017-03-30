@@ -34,7 +34,7 @@ function [nn_, err_hist, it] = back_prop_batch_jac(train_set, target, nn, train_
       
     % Output layer weights (Linear combiner)
     derror_dw = -2*repmat(error, 1, nn_.mid_sz+1).*mid_layer_func_out_bias;
-    derror_dw = mean(derror_dw, 3);
+%    derror_dw = mean(derror_dw, 3);
     
     % Middle layer weights
     w = repmat(nn_.w(:, 2:end), 1, 1, samples_sz);
@@ -45,20 +45,21 @@ function [nn_, err_hist, it] = back_prop_batch_jac(train_set, target, nn, train_
                    repmat(nn_.diff(mid_layer_func_in), nn_.in_sz+1, 1)               .* ...
                    repmat(in_bias, 1, nn_.mid_sz);
 
-    derror_dv = mean(derror_dv, 3);
-    
+%    derror_dv = mean(derror_dv, 3);
+%    keyboard
     weigths(1:mid_layer_weigths_number) = nn_.v(:); 
     weigths(mid_layer_weigths_number+1:end) = nn_.w(:);
-
-    J(1:mid_layer_weigths_number) = derror_dv(:); 
-    J(mid_layer_weigths_number+1:end) = derror_dw(:);
-
-    d2J = 2*pinv(J*J' + train_par.mu*eye(size(J,1)));
-%    keyboard
-   mean_error
-   error
-    weigths = weigths - train_par.alpha*d2J*J*mean_error;
     
+    Jv = reshape(derror_dv, (nn_.in_sz+1)*nn_.mid_sz, samples_sz)';
+    Jw = reshape(derror_dw, nn_.mid_sz+1, samples_sz)';
+%    keyboard
+    J = [Jv Jw];
+    H = J'*J;
+    d2J = 2*pinv(H + train_par.mu*eye(size(J,2)));
+%    keyboard
+   
+    weigths = weigths - train_par.alpha*d2J*J'*reshape(error, samples_sz, 1);
+
     nn_.v = reshape(weigths(1:mid_layer_weigths_number), nn_.in_sz+1, nn_.mid_sz);
     nn_.w = weigths(mid_layer_weigths_number+1:end)';
     
