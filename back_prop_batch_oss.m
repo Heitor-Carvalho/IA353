@@ -1,4 +1,4 @@
-function [nn_, err_hist, it] = back_prop_batch_jac(train_set, target, nn, train_par)
+function [nn_, err_hist, it] = back_prop_batch_oss(train_set, target, nn, train_par)
   % To do: add support to multiples outputs
   % To do: add function description
   % Levenberg-Marquart  
@@ -21,6 +21,7 @@ function [nn_, err_hist, it] = back_prop_batch_jac(train_set, target, nn, train_
   while(mse_error >= train_par.max_error && ...
         it        < train_par.max_it)
    
+%     [derror_dv, derror_dw, mse_error] = calculate_gradient(train_set, target, nn_);
     mse_error = 0;
   
     % Foward part - Neural network output
@@ -29,7 +30,6 @@ function [nn_, err_hist, it] = back_prop_batch_jac(train_set, target, nn, train_
     % Neuro network error
     error = target - nn_out;
     error = reshape(error, 1 , 1, samples_sz);
-    mean_error = mean(error, 3);
     mse_error = mean(error.^2);
       
     % Output layer weights (Linear combiner)
@@ -47,6 +47,7 @@ function [nn_, err_hist, it] = back_prop_batch_jac(train_set, target, nn, train_
 
     derror_dv = mean(derror_dv, 3);
     
+
     weigths(1:mid_layer_weigths_number) = nn_.v(:); 
     weigths(mid_layer_weigths_number+1:end) = nn_.w(:);
 
@@ -54,10 +55,7 @@ function [nn_, err_hist, it] = back_prop_batch_jac(train_set, target, nn, train_
     J(mid_layer_weigths_number+1:end) = derror_dw(:);
 
     d2J = 2*pinv(J*J' + train_par.mu*eye(size(J,1)));
-%    keyboard
-   mean_error
-   error
-    weigths = weigths - train_par.alpha*d2J*J*mean_error;
+    weigths = weigths - train_par.alpha*d2J*J;
     
     nn_.v = reshape(weigths(1:mid_layer_weigths_number), nn_.in_sz+1, nn_.mid_sz);
     nn_.w = weigths(mid_layer_weigths_number+1:end)';

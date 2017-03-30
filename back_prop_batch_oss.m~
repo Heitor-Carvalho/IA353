@@ -1,0 +1,42 @@
+function [nn_, err_hist, it] = back_prop_batch_oss(train_set, target, nn, train_par)
+  % To do: add support to multiples outputs
+  % To do: add function description
+  % Levenberg-Marquart  
+  nn_ = nn;
+  mse_error = train_par.max_error;
+  err_hist = zeros(1, train_par.max_it);
+  it = 0;
+
+  delta_w_past = 0;
+  delta_v_past = 0;
+  
+  mid_layer_weigths_number = (nn_.in_sz+1)*nn_.mid_sz;
+  output_layer_weigths_number = (nn_.mid_sz + 1)*nn_.out_sz;
+  weitghs_number = mid_layer_weigths_number + output_layer_weigths_number;
+
+  J = zeros(weitghs_number, 1);
+  weigths = zeros(weitghs_number, 1);
+
+  while(mse_error >= train_par.max_error && ...
+        it        < train_par.max_it)
+   
+    [derror_v, derror_w]
+    weigths(1:mid_layer_weigths_number) = nn_.v(:); 
+    weigths(mid_layer_weigths_number+1:end) = nn_.w(:);
+
+    J(1:mid_layer_weigths_number) = derror_dv(:); 
+    J(mid_layer_weigths_number+1:end) = derror_dw(:);
+
+    d2J = 2*pinv(J*J' + train_par.mu*eye(size(J,1)));
+    weigths = weigths - train_par.alpha*d2J*J*mse_error;
+    
+    nn_.v = reshape(weigths(1:mid_layer_weigths_number), nn_.in_sz+1, nn_.mid_sz);
+    nn_.w = weigths(mid_layer_weigths_number+1:end)';
+    
+    it = it + 1;
+    mse_error
+    err_hist(it) = mse_error;
+
+  end
+  
+end

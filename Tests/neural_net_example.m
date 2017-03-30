@@ -1,3 +1,5 @@
+addpath('../NeuralNetwork/')
+
 % Example: Neural net 
 % - 2 inputs
 % - 3 neurons in the middle layer

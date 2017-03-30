@@ -1,0 +1,31 @@
+function [w] = calc_elm_weigths(in, target, c, nn)
+ % elm_weigths(in, target, c, nn) - Calculates the output layer weigths
+ % that minimizes the MSE with regularization parameter c
+ % for a given intermideate layer and a training set.
+ %   in       : input samples (One or multiples samples)
+ %   target   : input samples (One or multiples samples)
+ %   c        : regularization parameters
+ % Initialized neuro network structure:
+ %   nn.v     : middle layer weights
+ %   nn.w     : output layer weights
+ %   nn.b     : neurons bias
+ %   nn.func  : neural network function 
+ %
+ %
+ % To do: Add support to multiple output layers
+ 
+ 
+  [in_sz, samples_sz] = size(in);
+  middle_sz = size(nn.v, 2);
+  
+  [~, mid_layer_out_bias] = neural_nete(in, nn);
+
+  H = reshape(mid_layer_out_bias, middle_sz+1, samples_sz)';
+  
+  if(middle_sz > samples_sz)
+      w = H'*pinv(H*H' + c*eye(min(size(H))))*target';
+  else
+      w = pinv(H'*H + c*eye(min(size(H))))*H'*target';
+  end
+  
+end
