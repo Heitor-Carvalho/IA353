@@ -3,7 +3,6 @@ function [nn_, err_hist, it] = back_prop_batch_jac(train_set, target, nn, train_
   % To do: add function description
   % Levenberg-Marquart  
   nn_ = nn;
-  samples_sz = size(train_set, 2);
   mse_error = train_par.max_error;
   err_hist = zeros(1, train_par.max_it);
   it = 0;
@@ -11,12 +10,7 @@ function [nn_, err_hist, it] = back_prop_batch_jac(train_set, target, nn, train_
   delta_w_past = 0;
   delta_v_past = 0;
   
-  mid_layer_weigths_number = (nn_.in_sz+1)*nn_.mid_sz;
-  output_layer_weigths_number = (nn_.mid_sz + 1)*nn_.out_sz;
-  weitghs_number = mid_layer_weigths_number + output_layer_weigths_number;
-
-  J = zeros(weitghs_number, 1);
-  weigths = zeros(weitghs_number, 1);
+  samples_sz = size(train_set, 2);
 
   while(mse_error >= train_par.max_error && ...
         it        < train_par.max_it)
@@ -29,14 +23,12 @@ function [nn_, err_hist, it] = back_prop_batch_jac(train_set, target, nn, train_
     % Neuro network error
     error = target - nn_out;
     error = reshape(error, 1 , 1, samples_sz);
-    mean_error = mean(error, 3);
     mse_error = mean(error.^2);
       
-    % Output layer weights (Linear combiner)
+    % Output layer weights gradient
     derror_dw = -2*repmat(error, 1, nn_.mid_sz+1).*mid_layer_func_out_bias;
-%    derror_dw = mean(derror_dw, 3);
     
-    % Middle layer weights
+    % Middle layer weights gradient
     w = repmat(nn_.w(:, 2:end), 1, 1, samples_sz);
     
     
@@ -45,24 +37,34 @@ function [nn_, err_hist, it] = back_prop_batch_jac(train_set, target, nn, train_
                    repmat(nn_.diff(mid_layer_func_in), nn_.in_sz+1, 1)               .* ...
                    repmat(in_bias, 1, nn_.mid_sz);
 
-%    derror_dv = mean(derror_dv, 3);
-%    keyboard
-    weigths(1:mid_layer_weigths_number) = nn_.v(:); 
-    weigths(mid_layer_weigths_number+1:end) = nn_.w(:);
-    
     Jv = reshape(derror_dv, (nn_.in_sz+1)*nn_.mid_sz, samples_sz)';
     Jw = reshape(derror_dw, nn_.mid_sz+1, samples_sz)';
-%    keyboard
-    J = [Jv Jw];
-    H = J'*J;
-    d2J = 2*pinv(H + train_par.mu*eye(size(J,2)));
-%    keyboard
-   
-    weigths = weigths - train_par.alpha*d2J*J'*reshape(error, samples_sz, 1);
 
-    nn_.v = reshape(weigths(1:mid_layer_weigths_number), nn_.in_sz+1, nn_.mid_sz);
-    nn_.w = weigths(mid_layer_weigths_number+1:end)';
+    J = [Jv Jw];
     
+    % Levenberg-Marquart Method    
+    d2J = 2*pinv(J'*J + train_par.mu*eye(size(J,2)));
+    deltaW = d2J*J'*reshape(error, samples_sz, 1);
+
+    weigths = convert_neuronet_vw_to_w(nn_);
+    keyboard
+    while(1)
+      Jfunc = @(alpha) mean((target - neural_nete(train_set, convert_w_to_neuronet_vw(weigths - alpha*deltaW, nn_))).^2)
+
+      alpha = golden_search(0, 1e-3, Jfunc, 1e-4);
+    
+      if(mse_error < Jfunc(alpha))
+        train_par.mu = train_par.mu*10;
+      else
+        train_par.mu = train_par.mu*0.1;
+        break
+      end
+    
+    end
+ 
+    weigths = weigths - train_par.alpha*deltaW;
+    nn_ = convert_w_to_neuronet_vw(weigths, nn_);
+
     it = it + 1;
     mse_error
     err_hist(it) = mse_error;

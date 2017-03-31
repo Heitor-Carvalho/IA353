@@ -9,7 +9,6 @@ clear nn
 in_sz = 2;
 mid_layer_sz = 5;
 out_sz = 1;
-nn.func = @(x) 1 ./ (1 + exp(-x));
 nn.b = 1;
 nn.v = 1*randn(in_sz+1, mid_layer_sz);
 nn.w = 1*randn(1, mid_layer_sz+1);
