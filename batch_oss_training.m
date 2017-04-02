@@ -7,9 +7,10 @@ function [nn_, err_hist, it] = batch_oss_training(train_set, target, nn, train_p
   err_hist = zeros(1, train_par.max_it);
   it = 0;
 
-  J_past = 0;
- 
   samples_sz = size(train_set, 2);
+
+  % Calculate gradient using backpropagation
+  g_i = -back_prop_batch_gradient(train_set, target, nn_);
 
   while(mse_error >= train_par.max_error && ...
         it        < train_par.max_it)
@@ -19,12 +20,8 @@ function [nn_, err_hist, it] = batch_oss_training(train_set, target, nn, train_p
     % Get weiths from neuro network structure    
     weigths = convert_neuronet_vw_to_w(nn_);
 
-    % Calculate gradient using backpropagation
-    J_ib = back_prop_batch_gradient(train_set, target, nn_);
-    
-    % Davidon-Fletcher-Powell    
-    if(mod(it, length(J_ib)) == 0)
-      d = -J_ib;
+    if(mod(it, length(g_i)) == 0)
+      d = g_i;
     end
 
     weigths = convert_neuronet_vw_to_w(nn_);
@@ -35,26 +32,24 @@ function [nn_, err_hist, it] = batch_oss_training(train_set, target, nn, train_p
     % Line search for alpha
     train_par.alpha = golden_search(0, 1, Jfunc, 1e-3);
 
-
     p = train_par.alpha*d;
-
     s = p;
-
-    weigths = weigths + p;
+    weigths = weigths + train_par.alpha*d;
     nn_ = convert_w_to_neuronet_vw(weigths, nn_);
-    J_if = back_prop_batch_gradient(train_set, target, nn_);
+    g_i1 = -back_prop_batch_gradient(train_set, target, nn_);
 
-    q = J_if-J_ib;
+    q = g_i-g_i1;
 
-    A = -(1 + (q'*q)/(s'*q))*((s'*J_ib)/(s'*q)) + (q'*J_ib)/(s'*q);
-    B = (s'*J_ib)/(s'*q);
+    A = -(1 + (q'*q)/(s'*q))*((s'*-g_i)/(s'*q)) + (q'*-g_i)/(s'*q);
+    B = (s'*-g_i)/(s'*q);
 
-    d = -J_ib + A*s + B*q;
-   
+    d = g_i + A*s + B*q;
+    
     % Calculation MSE error
     mse_error = mean((target - neural_nete(train_set, nn_)).^2);
 
     it = it + 1;
+    g_i = g_i1;
     err_hist(it) = mse_error;
    
   end

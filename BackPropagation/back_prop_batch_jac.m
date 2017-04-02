@@ -23,6 +23,7 @@ function [nn_, err_hist, it] = back_prop_batch_jac(train_set, target, nn, train_
     % Neuro network error
     error = target - nn_out;
     error = reshape(error, 1 , 1, samples_sz);
+    keyboard    
     mse_error = mean(error.^2);
       
     % Output layer weights gradient
@@ -43,29 +44,33 @@ function [nn_, err_hist, it] = back_prop_batch_jac(train_set, target, nn, train_
     J = [Jv Jw];
     
     % Levenberg-Marquart Method    
-    d2J = 2*pinv(J'*J + train_par.mu*eye(size(J,2)));
-    deltaW = d2J*J'*reshape(error, samples_sz, 1);
+%     while(1)
+%         keyboard
+      d2J = 2*pinv(J'*J + train_par.mu*eye(size(J,2)));
+      d2J = 1;
+      deltaW = d2J*J'*reshape(error, samples_sz, 1);
 
-    weigths = convert_neuronet_vw_to_w(nn_);
-    keyboard
-    while(1)
-      Jfunc = @(alpha) mean((target - neural_nete(train_set, convert_w_to_neuronet_vw(weigths - alpha*deltaW, nn_))).^2)
+      weigths = convert_neuronet_vw_to_w(nn_);
 
-      alpha = golden_search(0, 1e-3, Jfunc, 1e-4);
+      Jfunc = @(alpha) mean((target - neural_nete(train_set, convert_w_to_neuronet_vw(weigths - alpha*deltaW, nn_))).^2);
+
+      alpha =  golden_search(0, 10, Jfunc, 1e-4)
     
-      if(mse_error < Jfunc(alpha))
-        train_par.mu = train_par.mu*10;
-      else
-        train_par.mu = train_par.mu*0.1;
-        break
-      end
-    
-    end
- 
-    weigths = weigths - train_par.alpha*deltaW;
+      if(Jfunc(alpha) < mse_error)
+        train_par.mu = max(train_par.mu*0.5, 1e-6);
+    weigths = weigths - alpha*deltaW;
     nn_ = convert_w_to_neuronet_vw(weigths, nn_);
+      else
+        train_par.mu = min(train_par.mu*2, 1e3);
+%         break
+      end
+        mu = train_par.mu
+    
+%     end
+ 
 
     it = it + 1;
+%         mu = train_par.mu
     mse_error
     err_hist(it) = mse_error;
 

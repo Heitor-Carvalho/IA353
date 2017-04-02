@@ -41,8 +41,8 @@ clear nn
 in_sz = 1;
 mid_layer_sz = 20;
 out_sz = 1;
-nn.v = 1*randn(in_sz+1, mid_layer_sz);
-nn.w = 1*randn(1, mid_layer_sz+1);
+nn.v = 4*randn(in_sz+1, mid_layer_sz);
+nn.w = 4*randn(1, mid_layer_sz+1);
 nn.b = 1;
 nn.func = @(x) exp(x)./(1 + exp(x));
 nn.diff = @(x) exp(x)./(1 + exp(x)).^2;
