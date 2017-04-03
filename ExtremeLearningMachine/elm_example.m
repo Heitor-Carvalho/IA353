@@ -18,7 +18,7 @@ nn = neuro_net_init(nn);
 
 err = [];
 for c = 0:0.1:0
-  nn.w = elm_weigths(in, target, c, nn)';
+  nn.w = calc_elm_weigths(in, target, c, nn)';
   err = [err, mean((neural_nete(in, nn) - target).^2)];
 end
 
@@ -69,9 +69,8 @@ nn.func = @(x) 1./(1+exp(-x));
 nn = neuro_net_init(nn);
 
 % Call training routine
-c = 0.6e-5;
 c = 0;
-w = elm_weigths(in, target, c, nn);
+w = calc_elm_weigths(in, target, c, nn);
 
 % Setting up weigths
 nn.w = w';

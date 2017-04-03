@@ -1,9 +1,12 @@
 function [nn] = neuro_net_init(nn)
-  % Initialze neuro netwok struct, add fields informing
-  % networ input size, middle layer size and output size
-  % Also, check consistent betwen middle layer size and 
-  % number of outputs weigths.
-  
+  % neuro_net_init(nn) - Initialze a neural netwok struct
+  % adding fields informing the network input size, middle layer size 
+  % and number of output. Also, check consistent betwen middle layer 
+  % size and number of outputs weigths.
+  % Inputs:
+  %   nn.v    : middle layer weights
+  %   nn.w    : output layer weights
+
   nn.in_sz = size(nn.v, 1)-1;
   nn.mid_sz = size(nn.v, 2);
 

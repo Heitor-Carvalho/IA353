@@ -32,7 +32,8 @@ function [nn_, err_hist, it] = batch_pr_training(train_set, target, nn, train_pa
     weigths = weigths + train_par.alpha*d;
     nn_ = convert_w_to_neuronet_vw(weigths, nn_);
     
-    g_i1 = -back_prop_batch_gradient(train_set, target, nn_);
+   % Training method Polak-Ribière
+   g_i1 = -back_prop_batch_gradient(train_set, target, nn_);
     
     beta = max(0, g_i1'*(g_i1-g_i)/(g_i'*g_i));
 

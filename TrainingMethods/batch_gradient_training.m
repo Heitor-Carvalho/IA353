@@ -25,7 +25,7 @@ function [nn_, err_hist, it] = batch_gradient_training(train_set, target, nn, tr
     % Normalize gradient
     J = J./norm(J);
 
-    % GRAD optimization method with momentum
+    % Training method gradient
     delta_weigths = train_par.alpha*J - train_par.beta*J_past;
     J_past = delta_weigths;
     weigths =  weigths - delta_weigths;

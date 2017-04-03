@@ -1,4 +1,4 @@
-function [nn_, err_hist, it] = batch_dfp_training(train_set, target, nn, train_par)
+function [nn_, err_hist, it] = batch_bfgs_training(train_set, target, nn, train_par)
   % To do: add support to multiples outputs
   % To do: add function description
 
@@ -33,14 +33,15 @@ function [nn_, err_hist, it] = batch_dfp_training(train_set, target, nn, train_p
     Jfunc = @(alpha) mean((target - neural_nete(train_set, convert_w_to_neuronet_vw(weigths + alpha*d, nn_))).^2);
 
     % Line search for alpha
-    train_par.alpha = golden_search(0, 2, Jfunc, 1e-3);
-
+    train_par.alpha = golden_search(0, 1, Jfunc, 1e-3);
+    
+    % Training method Broyden-Fletcher-Goldfarb-Shanno
     p = train_par.alpha*d;
     weigths = weigths + train_par.alpha*d;
     nn_ = convert_w_to_neuronet_vw(weigths, nn_);
     g_i1 = -back_prop_batch_gradient(train_set, target, nn_);
     q = g_i-g_i1;
-    H = H + p*p'./(p'*q) - H*q*q'*H/(q'*H*q);
+    H = H + (p*p'./(p'*q))*(1 + q'*H*q/(p'*q)) - (H*q*p' + p*q'*H)/(p'*q);
     
     % Calculation MSE error
     mse_error = mean((target - neural_nete(train_set, nn_)).^2);

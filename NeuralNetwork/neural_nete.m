@@ -1,14 +1,22 @@
 function [out, mid_layer_func_out_bias, mid_layer_func_out, mid_layer_func_in, in_bias] = neural_nete(in, nn)
   % neural_net(in, v, w, b, func) - Calculate a one hidden layer neural network
+  % Inputs:
   %   in      : input samples (One or multiples samples)
   % Initialized neuro network structure:
   %   nn.v    : middle layer weights
   %   nn.w    : output layer weights
   %   nn.b    : neurons bias
-  %   nn.func : neural network function 
+  %   nn.func : neuron activation function
+  %
+  % Outputs:
+  %   out                     : neural network output
+  %   mid_layer_func_out_bias : middle layer output after activation function plus bias
+  %   mid_layer_func_out      : middle layer output after activation function
+  %   mid_layer_func_in       : middle layer activation function input
+  %   in_bias                 : input plus bias
   %
   %  OBS:  The samples must passed as collumns where each collumns corresponds to
-  % a sample and each line correspond to one different input.
+  %        a sample and each line correspond to one different input.
   %        The middle layer weigths for each input (include the bias input)
   %        correspond to one line of the matrix v. 
   %        The sampe happens with the output weigths

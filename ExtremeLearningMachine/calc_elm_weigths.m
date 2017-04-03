@@ -2,6 +2,7 @@ function [w] = calc_elm_weigths(in, target, c, nn)
  % elm_weigths(in, target, c, nn) - Calculates the output layer weigths
  % that minimizes the MSE with regularization parameter c
  % for a given intermideate layer and a training set.
+ % Inputs:
  %   in       : input samples (One or multiples samples)
  %   target   : input samples (One or multiples samples)
  %   c        : regularization parameters
@@ -11,7 +12,8 @@ function [w] = calc_elm_weigths(in, target, c, nn)
  %   nn.b     : neurons bias
  %   nn.func  : neural network function 
  %
- %
+ % Outputs:
+ %   w        : output layer weigths
  % To do: Add support to multiple output layers
  
  
