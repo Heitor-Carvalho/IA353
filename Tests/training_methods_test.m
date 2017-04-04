@@ -75,3 +75,26 @@ hold on
 plot(in_ref, nn_out, '.')
 err = mean((nn_out - target_ref).^2)
 
+%% Test 3 - sin(x).*cos(2*x)
+
+train_set = linspace(0, 2*pi, 40);
+target = sin(x).*cos(2*x);
+
+% Neural network structure
+clear nn
+in_sz = 1;
+mid_layer_sz = 10;
+out_sz = 1;
+nn.v = 1*rand(in_sz+1, mid_layer_sz);
+nn.w = 1*rand(1, mid_layer_sz+1);
+nn.b = 1;
+nn.func = @(x) exp(x)./(1 + exp(x));
+nn.diff = @(x) exp(x)./(1 + exp(x)).^2;
+nn = neuro_net_init(nn);
+
+train_par.max_error = 1e-4;
+train_par.max_it = 200;
+
+[nn_t, error, it] = batch_bfgs_training(train_set, target, nn, train_par);
+
+plot(neural_nete(train_set, nn_t));
