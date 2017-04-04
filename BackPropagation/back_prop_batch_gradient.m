@@ -30,6 +30,7 @@ function [grad, J] = back_prop_batch_gradient(train_set, target, nn)
   % Output layer weights (Linear combiner)
   Jw = -mid_layer_func_out_bias;
   derror_dw = 2*repmat(error, 1, nn.mid_sz+1).*Jw;
+
   derror_dw_mean = mean(derror_dw, 3);
     
   % Middle layer weights
@@ -40,11 +41,17 @@ function [grad, J] = back_prop_batch_gradient(train_set, target, nn)
         repmat(in_bias, 1, nn.mid_sz);
 
   derror_dv = 2*repmat(error, nn.in_sz+1, nn.mid_sz).*Jv;
+  
   derror_dv_mean = mean(derror_dv, 3);
-
+  
   grad_v = derror_dv_mean(:);
   grad_w = derror_dw_mean(:);
 
   grad = [grad_v; grad_w];
+  
+  Jw = reshape(Jw, nn.mid_sz+1, samples_sz)';
+  Jv = reshape(Jv, (nn.in_sz+1)*nn.mid_sz, samples_sz)';
+  J = [Jv Jw];
+  
   
 end
