@@ -1,4 +1,4 @@
-function [nn_, err_hist, it] = batch_lm_training(train_set, target, nn, train_par)
+function [nn_, err_hist, it] = batch_lm_training(train_set, target, nn, train_par, mu)
   % To do: add support to multiples outputs
   % To do: add function description
   
@@ -29,7 +29,7 @@ function [nn_, err_hist, it] = batch_lm_training(train_set, target, nn, train_pa
     [~, J] = back_prop_batch_gradient(train_set, target, nn_);
   
     % Training method Levenberg-Marquart
-    d2J = 2*pinv(J'*J + train_par.mu*eye(size(J,2)));
+    d2J = 2*pinv(J'*J + mu*eye(size(J,2)));
     deltaW = d2J*J'*reshape(error, samples_sz, 1);
 
     weigths = convert_neuronet_vw_to_w(nn_);
@@ -41,9 +41,7 @@ function [nn_, err_hist, it] = batch_lm_training(train_set, target, nn, train_pa
     weigths = weigths - alpha*deltaW;
     nn_ = convert_w_to_neuronet_vw(weigths, nn_);
   
-
     it = it + 1;
-    mse_error
     err_hist(it) = mse_error;
 
   end

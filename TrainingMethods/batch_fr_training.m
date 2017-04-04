@@ -7,8 +7,6 @@ function [nn_, err_hist, it] = batch_fr_training(train_set, target, nn, train_pa
   err_hist = zeros(1, train_par.max_it);
   it = 0;
 
-  train_par.beta = 0;
-
   % Calculate gradient using backpropagation
   g_i = -back_prop_batch_gradient(train_set, target, nn_);
   d = g_i; 
@@ -26,10 +24,10 @@ function [nn_, err_hist, it] = batch_fr_training(train_set, target, nn, train_pa
     Jfunc = @(alpha) mean((target - neural_nete(train_set, convert_w_to_neuronet_vw(weigths + alpha*d, nn_))).^2);
 
     % Line search for alpha
-    train_par.alpha = golden_search(0, 10, Jfunc, 1e-3)
+    alpha = golden_search(0, 10, Jfunc, 1e-3);
 
     % Training method Fletcher-Reeves
-    weigths = weigths + train_par.alpha*d;
+    weigths = weigths + alpha*d;
     nn_ = convert_w_to_neuronet_vw(weigths, nn_);
     
     g_i1 = -back_prop_batch_gradient(train_set, target, nn_);

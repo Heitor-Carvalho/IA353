@@ -33,11 +33,11 @@ function [nn_, err_hist, it] = batch_dfp_training(train_set, target, nn, train_p
     Jfunc = @(alpha) mean((target - neural_nete(train_set, convert_w_to_neuronet_vw(weigths + alpha*d, nn_))).^2);
 
     % Line search for alpha
-    train_par.alpha = golden_search(0, 2, Jfunc, 1e-3);
+    alpha = golden_search(0, 2, Jfunc, 1e-3);
 
     % Training method Davidon-Fletcher-Powell
-    p = train_par.alpha*d;
-    weigths = weigths + train_par.alpha*d;
+    p = alpha*d;
+    weigths = weigths + alpha*d;
     nn_ = convert_w_to_neuronet_vw(weigths, nn_);
     g_i1 = -back_prop_batch_gradient(train_set, target, nn_);
     q = g_i-g_i1;

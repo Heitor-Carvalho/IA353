@@ -1,4 +1,4 @@
-function [nn_, err_hist, it] = batch_gradient_training(train_set, target, nn, train_par)
+function [nn_, err_hist, it] = batch_gradient_training(train_set, target, nn, train_par, alpha, beta)
   % To do: add support to multiples outputs
   % To do: add function description
 
@@ -20,13 +20,13 @@ function [nn_, err_hist, it] = batch_gradient_training(train_set, target, nn, tr
     weigths = convert_neuronet_vw_to_w(nn_);
 
     % Calculate gradient using backpropagation
-    J = back_prop_batch_gradient(train_set, target, nn_);
+    grad = back_prop_batch_gradient(train_set, target, nn_);
 
     % Normalize gradient
-    J = J./norm(J);
+    grad = grad./norm(grad);
 
     % Training method gradient
-    delta_weigths = train_par.alpha*J - train_par.beta*J_past;
+    delta_weigths = alpha*grad - beta*J_past;
     J_past = delta_weigths;
     weigths =  weigths - delta_weigths;
     nn_ = convert_w_to_neuronet_vw(weigths, nn_);
