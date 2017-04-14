@@ -14,7 +14,7 @@ function [nn] = neuro_net_init(nn)
     nn.out_sz = size(nn.w, 1);
   
     % Checking number of output weigths
-    assert(nn.mid_sz == size(nn.w, 2)-1, 'Unexpected number of collumn for w, should be %d', nn.mid_sz);
+    assert(nn.mid_sz == size(nn.w, 2)-1, 'Unexpected number of collumn for w, should be %d', nn.mid_sz+1);
   end
   
 

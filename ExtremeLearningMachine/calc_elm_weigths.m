@@ -16,7 +16,6 @@ function [w] = calc_elm_weigths(in, target, reg_fact, nn)
  %   w        : output layer weigths
  % To do: Add support to multiple output layers
  
- 
   [in_sz, samples_sz] = size(in);
   middle_sz = size(nn.v, 2);
   
