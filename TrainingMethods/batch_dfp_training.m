@@ -11,7 +11,9 @@ function [nn_, err_hist, it] = batch_dfp_training(train_set, target, nn, train_p
 
   % Calculate gradient using backpropagation
   g_i = -back_prop_batch_gradient(train_set, target, nn_);
-
+  H = eye(length(g_i));
+  d = g_i;
+  
   while(mse_error >= train_par.max_error && ...
         it        < train_par.max_it)
    
@@ -19,16 +21,7 @@ function [nn_, err_hist, it] = batch_dfp_training(train_set, target, nn, train_p
   
     % Get weiths from neuro network structure    
     weigths = convert_neuronet_vw_to_w(nn_);
-    
-    if(mod(it, length(g_i)) == 0)
-      H = eye(length(g_i));
-      d = g_i;
-    else
-      d = H*g_i;
-    end
-
-    weigths = convert_neuronet_vw_to_w(nn_);
-    
+        
     % Functional to be minimized
     Jfunc = @(alpha) mean((target - neural_nete(train_set, convert_w_to_neuronet_vw(weigths + alpha*d, nn_))).^2);
 
@@ -43,6 +36,8 @@ function [nn_, err_hist, it] = batch_dfp_training(train_set, target, nn, train_p
     q = g_i-g_i1;
     H = H + p*p'./(p'*q) - H*q*q'*H/(q'*H*q);
     
+    d = H*g_i1;
+
     % Calculation MSE error
     mse_error = mean((target - neural_nete(train_set, nn_)).^2);
 
