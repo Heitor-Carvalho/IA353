@@ -1,4 +1,4 @@
-function [R_y_k, R_z_jb, z_jb, R_z_j, R_a_j, x_in] = neural_nete_r(in, nn, vnet)
+function [R_y_k, y_k, R_z_jb, z_jb, R_z_j, R_a_j, a_j, x_in] = neural_nete_r(in, nn, vnet)
   % neural_net(in, v, w, b, func) - Calculate a one hidden layer neural network
   % Inputs:
   %   in      : input samples (One or multiples samples)
@@ -54,8 +54,8 @@ function [R_y_k, R_z_jb, z_jb, R_z_j, R_a_j, x_in] = neural_nete_r(in, nn, vnet)
   % Calculating outputs
   y_k = sum(repmat(z_jb, out_sz, 1).*repmat(nn.w, 1, 1, samples_sz), 2);
 
-  R_y_k = sum(repmat(R_z_jb, out_sz, 1).*repmat(nn.w, 1, 1, samples_sz) +...
-            repmat(z_jb, out_sz, 1).*repmat(vnet.w, 1, 1, samples_sz), 2);
+  R_y_k = sum(repmat(R_z_jb, out_sz, 1).*repmat(nn.w, 1, 1, samples_sz) + ...
+              repmat(z_jb, out_sz, 1).*repmat(vnet.w, 1, 1, samples_sz), 2);
     
   y_k = reshape(y_k, out_sz, samples_sz);
   R_y_k = reshape(R_y_k, out_sz, samples_sz);

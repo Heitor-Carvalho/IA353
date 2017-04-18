@@ -35,10 +35,10 @@ train_par.max_error = 1e-5;
 % nn_out = neural_nete(train_set, nn_t) 
 % [nn_t, error, it_lm] = batch_lm_training(train_set, target, nn, train_par, 1e-5);
 % nn_out = neural_nete(train_set, nn_t) 
-% [nn_t, error, it_lm] = batch_gradient_lin_search_training(train_set, target, nn, train_par, 1e-3);
-% nn_out = neural_nete(train_set, nn_t) 
-[nn_t, error, it_fr] = batch_scg_training(train_set, target, 0.1, nn, train_par);
+[nn_t, error, it_lm] = batch_gradient_lin_search_training(train_set, target, nn, train_par, 1e-3);
 nn_out = neural_nete(train_set, nn_t) 
+%[nn_t, error, it_fr] = batch_scg_training(train_set, target, 0.1, nn, train_par);
+%nn_out = neural_nete(train_set, nn_t) 
 
 %% Test 2 - Polinomial interpolation
 
