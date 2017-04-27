@@ -1,32 +1,32 @@
-%Rotina que exibe o mapeamento entrada-saída e a fronteira de decisão de
-%uma rede MLP aplicada ao problema de equalização
+%Rotina que exibe o mapeamento entrada-saï¿½da e a fronteira de decisï¿½o de
+%uma rede MLP aplicada ao problema de equalizaï¿½ï¿½o
 
 %Entradas:
 %   canal - vetor com os coeficientes do canal (1 x nc)
-%   atraso - atraso de equalização, i.e., s(n-atraso) deverá ser recuperado na saída da rede
+%   atraso - atraso de equalizaï¿½ï¿½o, i.e., s(n-atraso) deverï¿½ ser recuperado na saï¿½da da rede
 %   W1 - matriz de pesos da camada de entrada da MLP - (N x K+1)
-%       N - número de neurônios na camada intermediária
-%       K é o número de entradas externas (no caso, para haver visualização do mapeamento, K = 2)
-%   W2 - matriz de pesos da camada de saída da MLP - (1 x N+1)
-%       No caso geral, seria L x N+1, onde L é o número de saídas da rede
-%   entrada - matriz com os dados de entrada do conjunto de treinamento (K x NT), onde NT denota o número de padrões (amostras) de entrada
+%       N - nï¿½mero de neurï¿½nios na camada intermediï¿½ria
+%       K ï¿½ o nï¿½mero de entradas externas (no caso, para haver visualizaï¿½ï¿½o do mapeamento, K = 2)
+%   W2 - matriz de pesos da camada de saï¿½da da MLP - (1 x N+1)
+%       No caso geral, seria L x N+1, onde L ï¿½ o nï¿½mero de saï¿½das da rede
+%   entrada - matriz com os dados de entrada do conjunto de treinamento (K x NT), onde NT denota o nï¿½mero de padrï¿½es (amostras) de entrada
 
 function map_fronteira_mlp_equalizacao(canal,atraso,W1,W2,entrada)
 
-%número de coeficientes do canal
+%nï¿½mero de coeficientes do canal
 nc = length(canal);
-%número de entradas da rede = dimensão dos estados do canal (subtrai o bias)
+%nï¿½mero de entradas da rede = dimensï¿½o dos estados do canal (subtrai o bias)
 K = size(W1,2); K = K - 1; 
-%obtém os estados do canal
+%obtï¿½m os estados do canal
 [C,S] = channel_states(canal,K);
-%Intervalo de análise do mapeamento
-x0 = (min(min(C))-1:.01:max(max(C))+1); MM = max(size(x0)); x1 = x0;
-%MAPEAMENTO ENTRADA-SAÍDA DA REDE
+%Intervalo de anï¿½lise do mapeamento
+x0 = (min(min(C))-1:.1:max(max(C))+1); MM = max(size(x0)); x1 = x0;
+%MAPEAMENTO ENTRADA-SAï¿½DA DA REDE
 mlp = zeros(MM,MM);
 for jj = 1:MM
     for ii = 1:MM
         xx = [x0(jj); x1(ii); 1]; %[r(k) r(k-1) bias]
-        %saída da rede para a entrada xx
+        %saï¿½da da rede para a entrada xx
         mlp(ii,jj) = W2*[tanh(W1*xx);1];
     end
 end
@@ -39,7 +39,7 @@ for ii=1:2^(K+nc-1)
         plot3(C(1,ii),C(2,ii),-1,'k*','MarkerSize',8,'LineWidth',2); 
      end
 end
-%VISUALIZAÇÃO DO CENÁRIO TRATADO E FRONTEIRA DE DECISÃO
+%VISUALIZAï¿½ï¿½O DO CENï¿½RIO TRATADO E FRONTEIRA DE DECISï¿½O
 figure; 
 plot(entrada(1,:),entrada(2,:),'r.');
 hold on;  

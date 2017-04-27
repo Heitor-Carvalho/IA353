@@ -12,7 +12,7 @@ d_case1 = 0;                                % Delay
 
 % Case 1
 h_case2 = [1 0.5 0.2]                       % Channel
-d_case2 = 2;                              % Delay
+d_case2 = 2;                                % Delay
 
 
 snr = 15;
@@ -22,8 +22,8 @@ n_test = 5000;
 
 % Data generation
 if(data_generation)
-  channel_samples_case1 = gera_dados_equalizacao(h_case1, snr, 2, d_case1, n_traing, n_validation, n_test);
-  channel_samples_case2 = gera_dados_equalizacao(h_case2, snr, 2, d_case2, n_traing, n_validation, n_test);
+  channel_samples_case1 = gera_dados_equalizacao(h_case1, snr, length(h_case1), d_case1, n_traing, n_validation, n_test);
+  channel_samples_case2 = gera_dados_equalizacao(h_case2, snr, length(h_case2), d_case2, n_traing, n_validation, n_test);
 end
 
 % Item (a)
