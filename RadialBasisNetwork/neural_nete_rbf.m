@@ -42,8 +42,8 @@ function [out, mid_layer_func_out_bias, mid_layer_func_out, mid_layer_func_in, i
   assert(in_sz == nn.in_sz+1, 'Unexpected number of neurons (collumns) for v, should be %d', in_sz);
   
   mid_layer_sum_in = (repmat(in_bias, 1, middle_sz) - in_centroids).*repmat(nn.v, 1, 1, samples_sz);
-  mid_layer_func_in = sum(mid_layer_sum_in, 1);
-  mid_layer_func_out = nn.func(mid_layer_func_in./nn.sig);
+  mid_layer_func_in = sqrt(sum(mid_layer_sum_in.^2, 1));
+  mid_layer_func_out = nn.func(mid_layer_func_in./sqrt(nn.sig));
   
   % Adding output layer bias
   mid_layer_func_out_bias = [nn.b*ones(1, 1, size(in, 2)) mid_layer_func_out];
