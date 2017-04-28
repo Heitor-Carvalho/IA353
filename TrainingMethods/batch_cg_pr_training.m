@@ -1,4 +1,4 @@
-function [nn_, err_hist, it] = batch_fr_training(train_set, target, nn, train_par)
+function [nn_, err_hist, it] = batch_cg_pr_training(train_set, target, nn, train_par)
   % To do: add support to multiples outputs
   % To do: add function description
 
@@ -29,19 +29,23 @@ function [nn_, err_hist, it] = batch_fr_training(train_set, target, nn, train_pa
     weigths = weigths + alpha*d;
     nn_ = convert_w_to_neuronet_vw(weigths, nn_);
     
-    % Training method Fletcher-Reeves
-    g_i1 = -back_prop_batch_gradient(train_set, target, nn_);
+   % Training method Polak-Ribière
+   g_i1 = -back_prop_batch_gradient(train_set, target, nn_);
     
-    beta = max(0, (g_i1'*g_i)/(g_i'*g_i));
+   beta = max(0, g_i1'*(g_i1-g_i)/(g_i'*g_i));
 
-    d = g_i1 + beta*d;
+   if(mod(it, length(g_i)) == 0)
+     d = g_i1;
+   else
+     d = g_i1 + beta*d;
+   end
 
-    % Calculation MSE error
-    mse_error = mean((target - neural_nete(train_set, nn_)).^2);
+   % Calculation MSE error
+   mse_error = mean((target - neural_nete(train_set, nn_)).^2);
 
-    it = it + 1;
-    g_i1 = g_i;
-    err_hist(it) = mse_error;
+   it = it + 1;
+   g_i1 = g_i;
+   err_hist(it) = mse_error;
    
   end
   

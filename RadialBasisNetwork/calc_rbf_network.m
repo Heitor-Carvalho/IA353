@@ -4,9 +4,9 @@ function [nn] = calc_rbf_network(train_set, target, middle_layer_sz, reg_fact)
  % the MSE with regularization parameter c for a given intermediate 
  % layer and a training set.
  % Inputs:
- %   train_set         : input samples (One or multiples samples)
- %   target            : input samples (One or multiples samples)
- %   middle_layer_sz   : input samples (One or multiples samples)
+ %   train_set         : input training samples (One or multiples samples)
+ %   target            : target samples (One or multiples samples)
+ %   middle_layer_sz   : hidden layer neurons number 
  %   reg_fact          : regularization parameters
  %
  % Outputs:
@@ -22,7 +22,7 @@ function [nn] = calc_rbf_network(train_set, target, middle_layer_sz, reg_fact)
   [idxs, centroids] = kmeans(train_set', middle_layer_sz);
   nn.b = 0;
   nn.c = centroids';
-  nn.sig = sqrt(max(pdist(nn.c'))); 
+  nn.sig = max(pdist(nn.c'))/sqrt(2*length(nn.c)); 
 
   % Preparing neuro network
   nn.v = [zeros(1, middle_layer_sz); ones(in_sz, middle_layer_sz)];

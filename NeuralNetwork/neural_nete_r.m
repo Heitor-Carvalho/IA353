@@ -1,11 +1,10 @@
-function [out, mid_layer_func_out_bias, mid_layer_func_out, mid_layer_func_in, in_bias] = neural_nete_rbf(in, nn)
-  % neural_net_rbf(in, v, w, b, func) - Calculate a one hidden layer neural network
+function [R_y_k, y_k, R_z_jb, z_jb, R_z_j, R_a_j, a_j, x_in] = neural_nete_r(in, nn, vnet)
+  % neural_net(in, v, w, b, func) - Calculate a one hidden layer neural network
   % Inputs:
   %   in      : input samples (One or multiples samples)
   % Initialized neuro network structure:
   %   nn.v    : middle layer weights
   %   nn.w    : output layer weights
-  %   nn.c    : radial base function centroids
   %   nn.b    : neurons bias
   %   nn.func : neuron activation function
   %
@@ -24,13 +23,11 @@ function [out, mid_layer_func_out_bias, mid_layer_func_out, mid_layer_func_in, i
   
   
   % Adding bias to the neuro network input
-  in_bias = [nn.b*ones(1, size(in, 2)); in];
-  [in_sz, samples_sz] = size(in_bias);
-  in_bias = reshape(in_bias, in_sz, 1, samples_sz);
-
+  x_in = [nn.b*ones(1, size(in, 2)); in];
+  [in_sz, samples_sz] = size(x_in);
+  x_in = reshape(x_in, in_sz, 1, samples_sz);
+  
   middle_sz = size(nn.v, 2);
-  in_centroids = repmat([zeros(1, middle_sz); nn.c], 1, 1, samples_sz);
-
   
   % Checking for neuro network weitghs 
   if(~isfield(nn, 'w'))
@@ -41,15 +38,26 @@ function [out, mid_layer_func_out_bias, mid_layer_func_out, mid_layer_func_in, i
   % Checking middle layer neurons number
   assert(in_sz == nn.in_sz+1, 'Unexpected number of neurons (collumns) for v, should be %d', in_sz);
   
-  mid_layer_sum_in = (repmat(in_bias, 1, middle_sz) - in_centroids).*repmat(nn.v, 1, 1, samples_sz);
-  mid_layer_func_in = sqrt(sum(mid_layer_sum_in.^2, 1));
-  mid_layer_func_out = nn.func(mid_layer_func_in./sqrt(nn.sig));
+  a_jm = repmat(x_in, 1, middle_sz).*repmat(nn.v, 1, 1, samples_sz);
+  a_j = sum(a_jm, 1);
+  
+  R_a_jm = repmat(x_in, 1, middle_sz).*repmat(vnet.v, 1, 1, samples_sz);
+  R_a_j = sum(R_a_jm, 1);
+
+  z_j = nn.func(a_j);
+  R_z_j = nn.diff(a_j).*R_a_j;
   
   % Adding output layer bias
-  mid_layer_func_out_bias = [nn.b*ones(1, 1, size(in, 2)) mid_layer_func_out];
+  z_jb = [nn.b*ones(1, 1, size(in, 2)) z_j];
+  R_z_jb = [nn.b*ones(1, 1, size(in, 2)) R_z_j];
   
   % Calculating outputs
-  out = sum(repmat(mid_layer_func_out_bias, out_sz, 1).*repmat(nn.w, 1, 1, samples_sz), 2);
-  out = reshape(out, out_sz, samples_sz);
+  y_k = sum(repmat(z_jb, out_sz, 1).*repmat(nn.w, 1, 1, samples_sz), 2);
+
+  R_y_k = sum(repmat(R_z_jb, out_sz, 1).*repmat(nn.w, 1, 1, samples_sz) + ...
+              repmat(z_jb, out_sz, 1).*repmat(vnet.w, 1, 1, samples_sz), 2);
+    
+  y_k = reshape(y_k, out_sz, samples_sz);
+  R_y_k = reshape(R_y_k, out_sz, samples_sz);
   
 end

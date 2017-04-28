@@ -11,6 +11,7 @@ function [nn_, err_hist, it] = batch_oss_training(train_set, target, nn, train_p
 
   % Calculate gradient using backpropagation
   g_i = -back_prop_batch_gradient(train_set, target, nn_);
+  d = g_i;
 
   while(mse_error >= train_par.max_error && ...
         it        < train_par.max_it)
@@ -18,12 +19,6 @@ function [nn_, err_hist, it] = batch_oss_training(train_set, target, nn, train_p
     mse_error = 0;
   
     % Get weiths from neuro network structure    
-    weigths = convert_neuronet_vw_to_w(nn_);
-
-    if(mod(it, length(g_i)) == 0)
-      d = g_i;
-    end
-
     weigths = convert_neuronet_vw_to_w(nn_);
     
     % Functional to be minimized

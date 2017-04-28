@@ -1,4 +1,4 @@
-function [nn_, err_hist, it] = batch_gradient_training(train_set, target, nn, train_par, beta)
+function [nn_, err_hist, it] = batch_gradient_lin_search_training(train_set, target, nn, train_par, beta)
   % To do: add support to multiples outputs
   % To do: add function description
 
