@@ -12,18 +12,22 @@ load('channel_training_data.mat')
 h_case1 = [0.9 1];                          % Channel
 d_case1 = 0;                                % Delay
 
-% Case 1
+% Case 2
 h_case2 = [1 0.5 0.2];                      % Channel
 d_case2 = 2;                                % Delay
 
-% RBF training - Case 1 - Exact number of centrers 
+% RBF training - Case 1_1 - Exact number of centrers 
 nn_case1_1 = calc_rbf_network(channel_samples_case1.entrada_treinamento, channel_samples_case1.desejado_treinamento, 8, 0);
 
-% RBF training - Case 2 - 4 extra centers
+% RBF training - Case 1_2 - 4 extra centers
 nn_case1_2 = calc_rbf_network(channel_samples_case1.entrada_treinamento, channel_samples_case1.desejado_treinamento, 12, 0);
+
+% RBF training - Case 2 - 16 centers
+nn_case2 = calc_rbf_network(channel_samples_case2.entrada_treinamento, channel_samples_case2.desejado_treinamento, 16, 0);
 
 map_fronteira_mlp_equalizacao_rbf(h_case1, d_case1, nn_case1_1.v, nn_case1_1.w, nn_case1_1.c, nn_case1_1.sig, channel_samples_case1.entrada_treinamento);
 map_fronteira_mlp_equalizacao_rbf(h_case1, d_case1, nn_case1_2.v, nn_case1_2.w, nn_case1_2.c, nn_case1_2.sig, channel_samples_case1.entrada_treinamento);
+map_fronteira_mlp_equalizacao_rbf(h_case2, d_case2, nn_case2.v, nn_case2.w, nn_case2.c, nn_case2.sig, channel_samples_case2.entrada_treinamento);
 
 %% Loading ideal 8 center network
 
@@ -84,3 +88,20 @@ center12_net_output_bpsk(center12_net_output < 0) = -1;
 
 mse_12center = mean((channel_samples_case1.desejado_teste(:, 1:1000) - center12_net_output).^2);
 ber_12center = sum(center12_net_output_bpsk ~= channel_samples_case1.desejado_teste(:, 1:1000))/length(center12_net_output_bpsk);
+
+%% Loading case 2 network
+
+% Generating mapping region
+map_fronteira_mlp_equalizacao_rbf(h_case2, d_case2, nn_case2.v, nn_case2.w, nn_case2.c, nn_case2.sig, channel_samples_case2.entrada_treinamento);
+
+% Generating error graph
+case2_net_output = neural_nete_rbf(channel_samples_case2.entrada_teste(:, 1:1000), nn_case2);
+
+% BER and MSE calculation
+case2_net_output_bpsk = case2_net_output;
+case2_net_output_bpsk(case2_net_output > 0) = 1; 
+case2_net_output_bpsk(case2_net_output < 0) = -1; 
+
+mse_12center = mean((channel_samples_case2.desejado_teste(:, 1:1000) - case2_net_output_bpsk).^2);
+ber_12center = sum(case2_net_output_bpsk ~= channel_samples_case2.desejado_teste(:, 1:1000))/length(case2_net_output_bpsk);
+

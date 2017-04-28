@@ -25,9 +25,9 @@ x0 = (min(min(C))-1:.1:max(max(C))+1); MM = max(size(x0)); x1 = x0;
 mlp = zeros(MM,MM);
 for jj = 1:MM
     for ii = 1:MM
-        xx = [x0(jj); x1(ii); 1]; %[r(k) r(k-1) bias]
+        xx = [1; x0(jj); x1(ii);]; %[r(k) r(k-1) bias]
         %sa�da da rede para a entrada xx
-        mlp(ii,jj) = W2*[tanh(W1*xx);1];
+        mlp(ii,jj) = W2*[1; tanh(W1*xx);];
     end
 end
 figure; mesh(x0,x1,mlp); xlabel('r(n)'); ylabel('r(n-1)'); zlabel('y_{MLP}(n)'); colormap jet;
