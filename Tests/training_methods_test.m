@@ -24,21 +24,19 @@ train_par.max_it = 200;
 train_par.max_error = 1e-5;
 
 [nn_t, error, it_bfgs] = batch_cg_dfp_training(train_set, target, nn, train_par);
-% nn_out = neural_nete(train_set, nn_t) 
-% [nn_t, error, it_dfp] = batch_dfp_training(train_set, target, nn, train_par);
-% nn_out = neural_nete(train_set, nn_t) 
-% [nn_t, error, it_fr] = batch_fr_training(train_set, target, nn, train_par);
-% nn_out = neural_nete(train_set, nn_t) 
-% [nn_t, error, it_pr] = batch_pr_training(train_set, target, nn, train_par);
-% nn_out = neural_nete(train_set, nn_t) 
-% [nn_t, error, it_oss] = batch_oss_training(train_set, target, nn, train_par);
-% nn_out = neural_nete(train_set, nn_t) 
-% [nn_t, error, it_lm] = batch_lm_training(train_set, target, nn, train_par, 1e-5);
-% nn_out = neural_nete(train_set, nn_t) 
-% [nn_t, error, it_lm] = batch_gradient_lin_search_training(train_set, target, nn, train_par, 1e-3);
-% nn_out = neural_nete(train_set, nn_t) 
-%[nn_t, error, it_fr] = batch_scg_training(train_set, target, 0.1, nn, train_par);
-%nn_out = neural_nete(train_set, nn_t) 
+nn_out = neural_nete(train_set, nn_t) 
+[nn_t, error, it_dfp] = batch_dfp_training(train_set, target, nn, train_par);
+nn_out = neural_nete(train_set, nn_t) 
+[nn_t, error, it_fr] = batch_fr_training(train_set, target, nn, train_par);
+nn_out = neural_nete(train_set, nn_t) 
+[nn_t, error, it_pr] = batch_pr_training(train_set, target, nn, train_par);
+nn_out = neural_nete(train_set, nn_t) 
+[nn_t, error, it_oss] = batch_oss_training(train_set, target, nn, train_par);
+nn_out = neural_nete(train_set, nn_t) 
+[nn_t, error, it_lm] = batch_lm_training(train_set, target, nn, train_par, 1e-5);
+nn_out = neural_nete(train_set, nn_t) 
+[nn_t, error, it_lm] = batch_gradient_lin_search_training(train_set, target, nn, train_par, 1e-3);
+nn_out = neural_nete(train_set, nn_t) 
 
 %% Test 2 - Polinomial interpolation
 
@@ -67,7 +65,7 @@ train_par.max_error = 1e-4;
 train_par.max_it = 200;
 
 [nn_t, error, it] = batch_bfgs_training(in, target, nn, train_par);
-[nn_t, error, it] = batch_lm_training(in, target, nn, train_par, 5e-3);
+[nn_t, error, it] = batch_lm_training(in, target, nn, train_par, 1e-2);
 
 nn_out = neural_nete(in_ref, nn_t);  
 
@@ -80,7 +78,7 @@ err = mean((nn_out - target_ref).^2)
 %% Test 3 - sin(x).*cos(2*x)
 
 train_set = linspace(0, 2*pi, 40);
-target = sin(x).*cos(2*x);
+target = sin(train_set).*cos(2*train_set);
 
 % Neural network structure
 clear nn
