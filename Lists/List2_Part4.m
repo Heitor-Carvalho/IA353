@@ -23,7 +23,7 @@ nn_case1_1 = calc_rbf_network(channel_samples_case1.entrada_treinamento, channel
 nn_case1_2 = calc_rbf_network(channel_samples_case1.entrada_treinamento, channel_samples_case1.desejado_treinamento, 12, 0);
 
 % RBF training - Case 2 - 16 centers
-nn_case2 = calc_rbf_network(channel_samples_case2.entrada_treinamento, channel_samples_case2.desejado_treinamento, 16, 0);
+nn_case2 = calc_rbf_network(channel_samples_case2.entrada_treinamento, channel_samples_case2.desejado_treinamento, 12, 0);
 
 map_fronteira_mlp_equalizacao_rbf(h_case1, d_case1, nn_case1_1.v, nn_case1_1.w, nn_case1_1.c, nn_case1_1.sig, channel_samples_case1.entrada_treinamento);
 map_fronteira_mlp_equalizacao_rbf(h_case1, d_case1, nn_case1_2.v, nn_case1_2.w, nn_case1_2.c, nn_case1_2.sig, channel_samples_case1.entrada_treinamento);
@@ -32,7 +32,7 @@ map_fronteira_mlp_equalizacao_rbf(h_case2, d_case2, nn_case2.v, nn_case2.w, nn_c
 %% Loading ideal 8 center network
 
 % Loading networks
-nn_struct = load('neural_net_8centers_ideal')
+nn_struct = load('neural_net_8centers_ideal');
 nn_ideal = nn_struct.nn_case1_1;
 
 % Generating mapping region
@@ -52,7 +52,7 @@ ber_ideal_8center = sum(ideal_8center_net_output_bpsk ~= channel_samples_case1.d
 %% Loading problem 8 centers network
 
 % Loading networks
-nn_struct = load('neural_net_8centers_problem')
+nn_struct = load('neural_net_8centers_problem');
 nn_problem = nn_struct.nn_case1_1;
 
 % Generating mapping region
@@ -72,7 +72,7 @@ ber_problem_8center = sum(problem_8center_net_output_bpsk ~= channel_samples_cas
 %% Loading problem 12 centers network
 
 % Loading networks
-nn_struct = load('neural_net_12centers')
+nn_struct = load('neural_net_12centers');
 nn_12_center = nn_struct.nn_case1_2;
 
 % Generating mapping region
@@ -90,6 +90,10 @@ mse_12center = mean((channel_samples_case1.desejado_teste(:, 1:1000) - center12_
 ber_12center = sum(center12_net_output_bpsk ~= channel_samples_case1.desejado_teste(:, 1:1000))/length(center12_net_output_bpsk);
 
 %% Loading case 2 network
+
+% Loading networks
+nn_struct = load('neural_net_case2_12centers');
+nn_case2 = nn_struct.nn_case2;
 
 % Generating mapping region
 map_fronteira_mlp_equalizacao_rbf(h_case2, d_case2, nn_case2.v, nn_case2.w, nn_case2.c, nn_case2.sig, channel_samples_case2.entrada_treinamento);

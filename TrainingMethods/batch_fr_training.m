@@ -1,8 +1,13 @@
-function [nn_, err_hist, it] = batch_fr_training(train_set, target, nn, train_par)
+function [nn_, err_hist, it] = batch_fr_training(input_sets, targets, nn, train_par)
   % To do: add support to multiples outputs
   % To do: add function description
 
+  % Getting training and target sets:
+  [train_set, input_sets] = get_train_set(input_sets);
+  [target, targets] = get_train_target(targets);
+
   nn_ = nn;
+
   mse_error = train_par.max_error;
   err_hist = zeros(1, train_par.max_it);
   it = 0;
@@ -24,7 +29,7 @@ function [nn_, err_hist, it] = batch_fr_training(train_set, target, nn, train_pa
     Jfunc = @(alpha) mean((target - neural_nete(train_set, convert_w_to_neuronet_vw(weigths + alpha*d, nn_))).^2);
 
     % Line search for alpha
-    alpha = golden_search(0, 10, Jfunc, 1e-3);
+    alpha = golden_search(0, 1, Jfunc, 1e-3);
 
     weigths = weigths + alpha*d;
     nn_ = convert_w_to_neuronet_vw(weigths, nn_);
@@ -37,11 +42,11 @@ function [nn_, err_hist, it] = batch_fr_training(train_set, target, nn, train_pa
     d = g_i1 + beta*d;
 
     % Calculation MSE error
-    mse_error = mean((target - neural_nete(train_set, nn_)).^2);
+    err_hist(:, it+1) = get_mse_error(input_sets, targets, nn_);
 
+    mse_error = err_hist(1, it+1);
     it = it + 1;
     g_i1 = g_i;
-    err_hist(it) = mse_error;
    
   end
   

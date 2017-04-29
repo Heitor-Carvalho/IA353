@@ -1,8 +1,13 @@
-function [nn_, err_hist, it] = batch_dfp_training(train_set, target, nn, train_par)
+function [nn_, err_hist, it] = batch_cg_dfp_training(input_sets, targets, nn, train_par)
   % To do: add support to multiples outputs
   % To do: add function description
 
+  % Getting training and target sets:
+  [train_set, input_sets] = get_train_set(input_sets);
+  [target, targets] = get_train_target(targets);
+
   nn_ = nn;
+
   mse_error = train_par.max_error;
   err_hist = zeros(1, train_par.max_it);
   it = 0;
@@ -33,7 +38,7 @@ function [nn_, err_hist, it] = batch_dfp_training(train_set, target, nn, train_p
     Jfunc = @(alpha) mean((target - neural_nete(train_set, convert_w_to_neuronet_vw(weigths + alpha*d, nn_))).^2);
 
     % Line search for alpha
-    alpha = golden_search(0, 2, Jfunc, 1e-3);
+    alpha = golden_search(0, 1, Jfunc, 1e-3);
 
     % Training method Davidon-Fletcher-Powell
     p = alpha*d;
@@ -44,11 +49,11 @@ function [nn_, err_hist, it] = batch_dfp_training(train_set, target, nn, train_p
     H = H + p*p'./(p'*q) - H*q*q'*H/(q'*H*q);
         
     % Calculation MSE error
-    mse_error = mean((target - neural_nete(train_set, nn_)).^2);
+    err_hist(:, it+1) = get_mse_error(input_sets, targets, nn_);
 
+    mse_error = err_hist(1, it+1);
     it = it + 1;
     g_i = g_i1;
-    err_hist(it) = mse_error;
    
   end
   

@@ -1,8 +1,13 @@
-function [nn_, err_hist, it] = batch_lm_training(train_set, target, nn, train_par, mu)
+function [nn_, err_hist, it] = batch_lm_training(input_sets, targets, nn, train_par, mu)
   % To do: add support to multiples outputs
   % To do: add function description
   
+  % Getting training and target sets:
+  [train_set, input_sets] = get_train_set(input_sets);
+  [target, targets] = get_train_target(targets);
+
   nn_ = nn;
+
   mse_error = train_par.max_error;
   err_hist = zeros(1, train_par.max_it);
   it = 0;
@@ -42,7 +47,9 @@ function [nn_, err_hist, it] = batch_lm_training(train_set, target, nn, train_pa
     nn_ = convert_w_to_neuronet_vw(weigths, nn_);
   
     it = it + 1;
-    err_hist(it) = mse_error;
+    err_hist(:, it) = get_mse_error(input_sets, targets, nn_);
+
+    mse_error = err_hist(1, it);
 
   end
   
