@@ -9,7 +9,7 @@ function [nn_, err_hist, it] = batch_gradient_lin_search_training(input_sets, ta
   nn_ = nn;
 
   mse_error = train_par.max_error;
-  err_hist = zeros(1, train_par.max_it);
+  err_hist = zeros(size(input_sets, 2), train_par.max_it);
   it = 0;
 
   J_past = 0;

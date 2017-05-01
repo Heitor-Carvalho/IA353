@@ -32,7 +32,7 @@ map_fronteira_mlp_equalizacao_rbf(h_case2, d_case2, nn_case2.v, nn_case2.w, nn_c
 %% Loading ideal 8 center network
 
 % Loading networks
-nn_struct = load('neural_net_8centers_ideal');
+nn_struct = load('./ListData/Part4/neural_net_8centers_ideal');
 nn_ideal = nn_struct.nn_case1_1;
 
 % Generating mapping region
@@ -52,7 +52,7 @@ ber_ideal_8center = sum(ideal_8center_net_output_bpsk ~= channel_samples_case1.d
 %% Loading problem 8 centers network
 
 % Loading networks
-nn_struct = load('neural_net_8centers_problem');
+nn_struct = load('./ListData/Part4/neural_net_8centers_problem');
 nn_problem = nn_struct.nn_case1_1;
 
 % Generating mapping region
@@ -72,7 +72,7 @@ ber_problem_8center = sum(problem_8center_net_output_bpsk ~= channel_samples_cas
 %% Loading problem 12 centers network
 
 % Loading networks
-nn_struct = load('neural_net_12centers');
+nn_struct = load('./ListData/Part4/neural_net_12centers');
 nn_12_center = nn_struct.nn_case1_2;
 
 % Generating mapping region
@@ -92,7 +92,7 @@ ber_12center = sum(center12_net_output_bpsk ~= channel_samples_case1.desejado_te
 %% Loading case 2 network
 
 % Loading networks
-nn_struct = load('neural_net_case2_12centers');
+nn_struct = load('./ListData/Part4/neural_net_case2_12centers');
 nn_case2 = nn_struct.nn_case2;
 
 % Generating mapping region
