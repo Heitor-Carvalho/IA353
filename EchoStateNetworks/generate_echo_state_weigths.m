@@ -17,16 +17,16 @@ function [Win, Wfb, Wall] = generate_echo_state_weigths(input_par, feedback_par)
 %                              zero 
 %     feedback_par.range: Range of values used to generate the weigths 
 %                         values
+%     feedback_par.sz: Size of the feedback weigth matrix
 %     feedback_par.alpha (optional): Parameter to adjust the network 
 %                        dynamic responde. High alpha for lower speeds
 %                        dynamics. Low alpha for higher speed dynamics
-%     feedback_par.sz: Size of the feedback weigth matrix
 %
 % Outputs:
 %   Win: Input weigth matrix
 %   Wfb: Feedback weigth matrix
 %   Wall: Combined Win and Wfb matrix
-%
+
   Win = full(sprand(input_par.sz(1), input_par.sz(2), input_par.sparseness));
   Win(Win ~= 0) = 2*(Win(Win ~= 0) - 0.5)*input_par.range;
 
@@ -34,7 +34,7 @@ function [Win, Wfb, Wall] = generate_echo_state_weigths(input_par, feedback_par)
   Wfb(Wfb ~= 0) = 2*(Wfb(Wfb ~= 0) - 0.5)*feedback_par.range;
  
   % Adjusting weigths spectral radius - An heuristic procedure 
-  % to adjust the neural network dynamics
+  % to adjust the echo state net dynamics
   if(isfield(feedback_par.alpha))
     lambdas = eig(Wfb);
     Wfb = Wfb/max(abs(lambdas));

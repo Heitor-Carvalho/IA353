@@ -7,9 +7,22 @@ net_middle_sz = 10;
 % Network - Output layer size
 net_out_sz = 1;
 
-% Pratical echo state network
-echo_net_in_sz     = in_sz + middle_sz;
-echo_net_middle_sz = net_middle_sz;
-echo_net_out_sz    = net_out_sz;
+% Creating the weigths to the 
+% the non feedback echo state network
+input_par.sz = [in_sz middle_sz];
+input_par.range = 1;
+input_par.sparseness = 1;
 
- 
+feedback_par.sz = [middle_sz middle_sz];
+feedback_par.range = 1;
+feedback_par.alpha = 0.95;
+
+[~, ~, Weigths] = generate_echo_state_weigths(input_par, feedback_par);
+
+nn.v = Weigths;
+nn.b = 0;
+nn = neural_net_init(nn);
+
+// Call training routine !
+
+
