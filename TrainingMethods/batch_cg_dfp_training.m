@@ -38,7 +38,6 @@ function [nn_, err_hist, it] = batch_cg_dfp_training(input_sets, targets, nn, tr
     Jfunc = @(alpha) mean((target - neural_nete(train_set, convert_w_to_neuronet_vw(weigths + alpha*d, nn_))).^2);
 
     % Line search for alpha
-    keyboard
     alpha = golden_search(0, 1, Jfunc, 1e-3)
 
     % Training method Davidon-Fletcher-Powell
@@ -52,7 +51,7 @@ function [nn_, err_hist, it] = batch_cg_dfp_training(input_sets, targets, nn, tr
     % Calculation MSE error
     err_hist(:, it+1) = get_mse_error(input_sets, targets, nn_);
 
-    mse_error = err_hist(1, it+1)
+    mse_error = err_hist(1, it+1);
     it = it + 1;
     g_i = g_i1;
    

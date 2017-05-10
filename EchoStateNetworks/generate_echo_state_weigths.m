@@ -35,7 +35,7 @@ function [Win, Wfb, Wall] = generate_echo_state_weigths(input_par, feedback_par)
  
   % Adjusting weigths spectral radius - An heuristic procedure 
   % to adjust the echo state net dynamics
-  if(isfield(feedback_par.alpha))
+  if(isfield(feedback_par, 'alpha'))
     lambdas = eig(Wfb);
     Wfb = Wfb/max(abs(lambdas));
     Wfb = Wfb*feedback_par.alpha;

@@ -1,5 +1,5 @@
 function [out, mid_layer_func_out_bias, mid_layer_func_out, mid_layer_func_in, in_bias] = neural_nete(in, nn)
-  % neural_net(in, v, w, b, func) - Calculate a one hidden layer neural network
+  % neural_net(in, nn) - Calculate a one hidden layer neural network
   % Inputs:
   %   in      : input samples (One or multiples samples)
   % Initialized neuro network structure:
