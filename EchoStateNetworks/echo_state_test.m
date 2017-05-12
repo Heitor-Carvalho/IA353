@@ -38,3 +38,5 @@ reg_factor = 0;
 nn.w = calc_esn_weigths(train, target, reg_factor, nn);
 
 output = neural_net_echo_states(train, nn);
+
+plot(output)

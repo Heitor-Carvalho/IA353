@@ -17,7 +17,7 @@ function [w] = calc_esn_weigths(in, target, reg_fact, nn_feedback)
     states_holder(:, i) = transpose(states);
   end
 
-  H = [ones(1, length(target)); states_holder]';
+  H = [nn_feedback.b*ones(1, length(target)); states_holder]';
   if(nn_feedback.mid_sz+1 > samples_sz)
       w = H'*pinv(H*H' + reg_fact*eye(min(size(H))))*target';
   else
