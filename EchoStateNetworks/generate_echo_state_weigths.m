@@ -1,21 +1,21 @@
 function [Win, Wfb, Wall] = generate_echo_state_weigths(input_par, feedback_par)
-% generate_echo_state_weigths : Function to generate the input 
+% generate_echo_state_weights: Function to generate the input 
 % and feedback weigth matrix for the echo state network
 %
 % Inputs:
 %   input_par: Parameters to generate the echo state network input 
-%              weigths.
+%              weights.
 %     input_par.sparseness: Percentage of connections different 
 %                           than zero. Number from 0 to 1
-%     input_par.range: Range o values used to generate the weigths
+%     input_par.range: Range o values used to generate the weights
 %                      values.
-%     input_par.sz: Size of the input weigth matrix
+%     input_par.sz: Size of the input weight matrix
 %
 %   feedback_par: Parameters to generate the echi state network feedback
 %                 weigths.
 %     feedback_par.sparseness: Percentage of connections different than 
 %                              zero 
-%     feedback_par.range: Range of values used to generate the weigths 
+%     feedback_par.range: Range of values used to generate the weights 
 %                         values
 %     feedback_par.sz: Size of the feedback weigth matrix
 %     feedback_par.alpha (optional): Parameter to adjust the network 

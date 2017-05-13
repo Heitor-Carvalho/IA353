@@ -1,7 +1,19 @@
 function [w] = calc_esn_weigths(in, target, reg_fact, nn_feedback)
-% This training procedure considers feedback from only the network states
-% and not the network outputs.
-  
+% [w] = calc_esn_weigths(in, target, reg_fact, nn_feedback)
+% This function calculates the output weights of the neural network.
+% 
+% The training procedure used in this function considers the feedback 
+% from only the network states and not the network outputs.
+%
+% Inputs:
+%  in - training set 
+%  target - training target
+%  reg_fact - regularization factor
+%  nn_feedback - echo state network structure
+%
+% Output:
+%  w - Output weights
+ 
   % Calculating the target sample size
   samples_sz = length(target);
   

@@ -1,5 +1,5 @@
 function [w] = calc_elm_weigths(in, target, reg_fact, nn)
- % calc_elm_weigths(in, target, c, nn) - Calculates the output layer weigths
+ % calc_elm_weigths(in, target, reg_fact, nn) - Calculates the output layer weigths
  % that minimizes the MSE with regularization parameter c
  % for a given intermediate layer and a training set.
  % Inputs:
