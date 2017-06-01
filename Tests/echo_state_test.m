@@ -1,4 +1,5 @@
 addpath('../NeuralNetwork/')
+addpath('../EchoStateNetworks/')
 
 % Network - Input layer size
 net_in_sz = 1;
@@ -13,12 +14,12 @@ net_out_sz = 1;
 % the non feedback echo state network
 input_par.sz = [net_in_sz net_middle_sz];
 input_par.range = 1;
-input_par.sparseness = 1;
+% input_par.sparseness = 1;
 
 feedback_par.sz = [net_middle_sz net_middle_sz];
 feedback_par.range = 1;
-feedback_par.alpha = 0.98;
-feedback_par.sparseness = 1;
+feedback_par.alpha = 0.95;
+% feedback_par.sparseness = 1;
 
 [~, ~, Weigths] = generate_echo_state_weigths(input_par, feedback_par);
 
@@ -31,7 +32,7 @@ nn = neuro_net_init(nn);
 
 % Training the network to learn a sin function
 % Same target to different inputs
-train = linspace(0, 4*pi, 300);
+train = linspace(0, 8*pi, 300);
 target = sin(train);
 
 reg_factor = 0;

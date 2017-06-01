@@ -27,13 +27,21 @@ function [Win, Wfb, Wall] = generate_echo_state_weigths(input_par, feedback_par)
 %   Wfb: Feedback weigth matrix
 %   Wall: Combined Win and Wfb matrix
 
-  Win = full(sprand(input_par.sz(1), input_par.sz(2), input_par.sparseness));
-  Win(Win ~= 0) = 2*(Win(Win ~= 0) - 0.5)*input_par.range;
-
-  Wfb = full(sprand(feedback_par.sz(1), feedback_par.sz(2), feedback_par.sparseness));
-  Wfb(Wfb ~= 0) = 2*(Wfb(Wfb ~= 0) - 0.5)*feedback_par.range;
- 
-  % Adjusting weigths spectral radius - An heuristic procedure 
+  if(isfield(input_par, 'sparseness'))
+    Win = full(sprand(input_par.sz(1), input_par.sz(2), input_par.sparseness));
+    Win(Win ~= 0) = 2*(Win(Win ~= 0) - 1)*input_par.range;
+  else
+    Win = 2*rand(input_par.sz(1), input_par.sz(2))-1;
+  end
+  
+  if(isfield(feedback_par, 'sparseness'))
+    Wfb = full(sprand(feedback_par.sz(1), feedback_par.sz(2), feedback_par.sparseness));
+    Wfb(Wfb ~= 0) = 2*(Wfb(Wfb ~= 0) - 0.5)*feedback_par.range;
+  else
+    Wfb = 2*rand(feedback_par.sz(1), feedback_par.sz(2))-1;
+  end
+  
+  % Adjusting weigths spectral radius - An heuristic procedure
   % to adjust the echo state net dynamics
   if(isfield(feedback_par, 'alpha'))
     lambdas = eig(Wfb);
