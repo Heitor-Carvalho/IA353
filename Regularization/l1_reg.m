@@ -7,13 +7,13 @@ l1_reg(d, W)
 % ||W*x - d ||^2 - lambda*|x|
 % 
 
-Q = lambda*W'*W*eye(size(W,2));
-epis = 1e4;
+Q = lambda*trace(W'*W)*eye(size(W,2))
+epis = 1e-4;
 
+g = W'*d;
 for it = 1:max_it
-  g = W'*d;
   x = pinv(W'*W + Q)*g;
-  Q = lambda*(1/(abs(x) + epis));
+  Q = lambda*diag((1./(abs(x) + epis)));
 end
 
 mse_error(it) = mean((d-W*x).^2);
