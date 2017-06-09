@@ -1,4 +1,4 @@
-l1_reg(d, W)
+function [x] = l1_reg(d, W, lambda, max_it)
 
 % Add referente and comment about the optimization 
 % method used
@@ -6,14 +6,16 @@ l1_reg(d, W)
 %
 % ||W*x - d ||^2 - lambda*|x|
 % 
+  keyboard
+  Q = lambda*trace(W'*W)*eye(size(W,2));
+  epis = 1e-7;
 
-Q = lambda*trace(W'*W)*eye(size(W,2))
-epis = 1e-4;
+  g = W'*d;
+  for it = 1:max_it
+    x = pinv(W'*W + Q)*g;
+    Q = lambda*diag((1./(abs(x) + epis)));
+  end
 
-g = W'*d;
-for it = 1:max_it
-  x = pinv(W'*W + Q)*g;
-  Q = lambda*diag((1./(abs(x) + epis)));
+  mse_error = mean((d-W*x).^2);
+
 end
-
-mse_error(it) = mean((d-W*x).^2);
