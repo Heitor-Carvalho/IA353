@@ -1,6 +1,6 @@
-function [w] = calc_elm_weigths(in, target, reg_fact, nn)
- % calc_elm_weigths(in, target, reg_fact, nn) - Calculates the output layer weigths
- % that minimizes the MSE with regularization parameter reg_fact
+function [w] = calc_elm_weigths_l1(in, target, reg_fact, nn)
+ % calc_elm_weigths_l1(in, target, reg_fact, nn) - Calculates the output layer weigths
+ % that minimizes the MSE with regularization parameter 50reg_fact using L1 norm
  % for a given intermediate layer and a training set.
  % Inputs:
  %   in       : input samples (One or multiples samples)
@@ -23,9 +23,9 @@ function [w] = calc_elm_weigths(in, target, reg_fact, nn)
 
   H = reshape(mid_layer_out_bias, middle_sz+1, samples_sz)';
   if(middle_sz+1 > samples_sz)
-      w = H'*pinv(H*H' + reg_fact*eye(min(size(H))))*target';
+      w = l1_reg(target', H, reg_fact, 40);
   else
-      w = pinv(H'*H + reg_fact*eye(min(size(H))))*H'*target';
+      w = l1_reg(target', H, reg_fact, 40);
   end
   
 end

@@ -1,12 +1,18 @@
-function [x] = l1_reg(d, W, lambda, max_it)
-
-% Add referente and comment about the optimization 
-% method used
-%
+function [x, mse_error] = l1_reg(d, W, lambda, max_it)
+% L1 norm regularization, solve x that minimizes the equation 
 %
 % ||W*x - d ||^2 - lambda*|x|
 % 
-  keyboard
+% Inputs:
+%   d         : target samples
+%   w         : pattern matrix
+%   lambda    : regularization parameter
+%   max_it    : max iteration number
+%
+% Outputs:
+%   x         : solved x
+%   mse_error : reconstruction error ||W*x - d ||^2
+%
   Q = lambda*trace(W'*W)*eye(size(W,2));
   epis = 1e-7;
 
