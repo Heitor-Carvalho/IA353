@@ -38,7 +38,7 @@ function [nn_, err_hist, it] = batch_cg_bfgs_training(input_sets, targets, nn, t
     Jfunc = @(alpha) mean((target - neural_nete(train_set, convert_w_to_neuronet_vw(weigths + alpha*d, nn_))).^2);
 
     % Line search for alpha
-    alpha = golden_search(0, 1, Jfunc, 1e-3);
+    alpha = bissec_search(0, 1, Jfunc, 1e-3);
     
     % Training method Broyden-Fletcher-Goldfarb-Shanno
     p = alpha*d;

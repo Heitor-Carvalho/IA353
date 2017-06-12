@@ -29,7 +29,7 @@ function [nn_, err_hist, it] = batch_pr_training(input_sets, targets, nn, train_
     Jfunc = @(alpha) mean((target - neural_nete(train_set, convert_w_to_neuronet_vw(weigths + alpha*d, nn_))).^2);
 
     % Line search for alpha
-    alpha = golden_search(0, 10, Jfunc, 1e-3);
+    alpha = bissec_search(0, 10, Jfunc, 1e-3);
 
     weigths = weigths + alpha*d;
     nn_ = convert_w_to_neuronet_vw(weigths, nn_);

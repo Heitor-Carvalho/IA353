@@ -41,7 +41,7 @@ function [nn_, err_hist, it] = batch_lm_training(input_sets, targets, nn, train_
 
     Jfunc = @(alpha) mean((target - neural_nete(train_set, convert_w_to_neuronet_vw(weigths - alpha*deltaW, nn_))).^2);
 
-    alpha =  golden_search(0, 10, Jfunc, 1e-4);
+    alpha =  bissec_search(0, 10, Jfunc, 1e-4);
     
     weigths = weigths - alpha*deltaW;
     nn_ = convert_w_to_neuronet_vw(weigths, nn_);

@@ -27,7 +27,7 @@ function [nn_, err_hist, it] = batch_fr_training(train_set, target, nn, train_pa
 %     Jfunc = @(alpha) mean((target - neural_nete(train_set, convert_w_to_neuronet_vw(weigths + alpha*d, nn_))).^2);
 
 %     % Line search for alpha
-%     alpha = golden_search(0, 10, Jfunc, 1e-3);
+%     alpha = bissec_search(0, 10, Jfunc, 1e-3);
 
 %     % Training method Fletcher-Reeves
     
