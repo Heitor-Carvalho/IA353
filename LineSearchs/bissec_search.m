@@ -1,5 +1,5 @@
-function [opt_x, opt] = golden_search(min_interval, max_interval, func, stop_err)
-  % Add description (min_interval, max_interval, func, stop_err) - seach by 
+function [opt_x, opt] = bissec_search(min_interval, max_interval, func, stop_err)
+  % bissec_search(min_interval, max_interval, func, stop_err) - seach by 
   % the minimum in the given interval   
   % Inputs:
   % min_interval : minimun value for seach interval
