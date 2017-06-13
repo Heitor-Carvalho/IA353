@@ -47,7 +47,6 @@ function [nn_, err_hist, it] = batch_cg_bfgs_training(input_sets, targets, nn, t
     g_i1 = -back_prop_batch_gradient(train_set, target, nn_);
     q = g_i-g_i1;
     H = H + (p*p'./(p'*q))*(1 + q'*H*q/(p'*q)) - (H*q*p' + p*q'*H)/(p'*q);
-    d = H*g_i;
     
     % Calculation MSE error
     err_hist(:, it+1) = get_mse_error(input_sets, targets, nn_);
