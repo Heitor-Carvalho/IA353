@@ -3,6 +3,8 @@ function [beta_hist, beta_sum] = lars(W, d)
 % find the regression coeficients moving in the least angle
 % direction. The variables became equally correlated with the residual
 % at each step.
+% This implementation follows the paper 2004 Least Angle Regression 
+% paper notation.
 %
 % Inputs:
 %  W - Data matrix, each collumn represents a variable and
@@ -13,53 +15,74 @@ function [beta_hist, beta_sum] = lars(W, d)
 %  beta_hist - beta values progression
 %  beta_sum  - sum of beta coefitients
 %
-
-  % Normalizing variables
   [W, d] = variables_normalize(W, d);
   
   mu = zeros(size(W,1), 1);
   beta = zeros(size(W,2), 1);
   selected_var_idx = logical(zeros(size(W,2), 1));
-  beta_sum = zeros(size(W,2)+1, 1);
-  beta_hist = zeros(size(W,2), size(W,2)+1);
+  beta_sum = zeros(size(W,2), 1);
+  beta_hist = zeros(size(W,2), size(W,2));
   
   beta_sum(1) = 0;
   beta_hist(:, 1) = beta;
-  for i = 2:size(W,2)+1
-    
-    % Calculating residual
-    residual = d - mu;
-    
-    % Residual variables correlations
-    correlations = W'*residual;
-    [max_corr, max_corr_idx] = max(abs(correlations));  % max_corr = C;
+  residual = d - mu;
+  correlations = W'*residual;
+  correlations_sign = sign(correlations);
+  [max_corr, max_corr_idx] = max(abs(correlations));  % max_corr = C;
+  selected_var_idx(find(abs(correlations) == max_corr)) = 1;
 
-    
-    % Active set
-    selected_var_idx(abs(max_corr - abs(correlations)) < 1e-5) = 1;
-    Xa = W(:, selected_var_idx);
-    
+  for i = 2:201
+    residual = d - mu;
+    correlations = W'*residual;
+    correlations_sign = sign(correlations);
+    [max_corr, max_corr_idx] = max(abs(correlations));  % max_corr = C;
+    Xa = W(:, selected_var_idx).*repmat(correlations_sign(selected_var_idx)', size(W,1), 1);
+
     % Calculating equiangular vector (vector equiangular with the collumns of W)
-    dk = pinv(Xa'*Xa)*Xa'*residual;
-    
-    % Correlation between OLS estimation with active set and the variables
-    a = W'*Xa*dk;
-    A = max(a);    
+    G = Xa'*Xa;
+    Ginv = inv(G);
+    A = 1/sqrt(sum(Ginv(:)));
+    w = A*sum(Ginv,2);
+    u = Xa*w;
 
     % Correlation of inputs with the equiangular vector
+    a = W'*u;
+   
     gamma_minus = (max_corr - correlations(~selected_var_idx))./(A-a(~selected_var_idx));
-    gamma_minus(gamma_minus < 0) = max_corr + 1;
+    gamma_minus(gamma_minus <= 0) = max_corr + 1;
     gamma_plus = (max_corr + correlations(~selected_var_idx))./(A+a(~selected_var_idx));
-    gamma_plus(gamma_plus < 0) = max_corr + 1;
-    [gamma_candidates, gamma_candidates_idx] = min([gamma_minus, gamma_plus]);
+    gamma_plus(gamma_plus <= 0) = max_corr + 1;
+    complement_var_pos = find(~selected_var_idx);
+    [gamma_candidates, gamma_candidates_idx] =   min([gamma_minus, gamma_plus]);
     [gamma, gamma_idx]  = min(gamma_candidates);
     if(isempty(gamma))
       gamma = max_corr/A;
     end
-    
-    beta(selected_var_idx) = beta(selected_var_idx) + gamma*dk;
 
-    mu = mu + gamma*Xa*dk;
+    % Checking LASSO condition
+    gamma_ = -beta(selected_var_idx)./(w.*correlations_sign(selected_var_idx));
+    gamma_(gamma_ <= 0) = gamma + 1;
+    [min_gamma, min_gamma_idx] = min(gamma_);
+
+    current_var_pos = find(selected_var_idx);
+    if(min_gamma < gamma)
+      gamma = min_gamma;
+      beta(selected_var_idx) = beta(selected_var_idx) + gamma*w.*correlations_sign(selected_var_idx);
+      beta(current_var_pos(min_gamma_idx)) = 0;
+      selected_var_idx(current_var_pos(min_gamma_idx)) = 0;
+    else
+      beta(selected_var_idx) = beta(selected_var_idx) + gamma*w.*correlations_sign(selected_var_idx);
+      selected_var_idx(complement_var_pos(gamma_candidates_idx(gamma_idx)))  = 1;
+    end 
+    
+    mu = mu + gamma*u;
+    current_var_pos'
+    %complement_var_pos(gamma_candidates_idx(gamma_idx))
+    %gamma_candidates_idx(gamma_idx)
+    i
+    gamma
+    
+
     beta_hist(:, i) = beta;
     beta_sum(i) = sum(abs(beta));
   end

@@ -1,5 +1,5 @@
-function [beta_hist, beta_sum] = lars_paper(W, d)
-% [beta_hist, beta_sum] = lars_paper(W, d) - Least Angle Regression algorithm
+function [beta_hist, beta_sum] = lars(W, d)
+% [beta_hist, beta_sum] = lars(W, d) - Least Angle Regression algorithm
 % find the regression coeficients moving in the least angle
 % direction. The variables became equally correlated with the residual
 % at each step.
@@ -31,7 +31,7 @@ function [beta_hist, beta_sum] = lars_paper(W, d)
     correlations = W'*residual;
     correlations_sign = sign(correlations);
     [max_corr, max_corr_idx] = max(abs(correlations));  % max_corr = C;
-    selected_var_idx(abs(max_corr - abs(correlations)) < 1e-5) = 1;
+    selected_var_idx(abs(max_corr - abs(correlations)) < 1e-9) = 1;
     Xa = W(:, selected_var_idx).*repmat(correlations_sign(selected_var_idx)', size(W,1), 1);
 
     % Calculating equiangular vector (vector equiangular with the collumns of W)
@@ -43,6 +43,7 @@ function [beta_hist, beta_sum] = lars_paper(W, d)
 
     % Correlation of inputs with the equiangular vector
     a = W'*u;
+
     gamma_minus = (max_corr - correlations(~selected_var_idx))./(A-a(~selected_var_idx));
     gamma_minus(gamma_minus < 0) = max_corr + 1;
     gamma_plus = (max_corr + correlations(~selected_var_idx))./(A+a(~selected_var_idx));
@@ -50,12 +51,14 @@ function [beta_hist, beta_sum] = lars_paper(W, d)
     [gamma_candidates, gamma_candidates_idx] =   min([gamma_minus, gamma_plus]);
     [gamma, gamma_idx]  = min(gamma_candidates);
     if(isempty(gamma))
-      gamma = max_corr/A;
+      gamma = max_corr/A
     end
     mu = mu + gamma*u;
-    beta = pinv(W)*mu;
+
+    beta(selected_var_idx) = beta(selected_var_idx) + gamma*w.*correlations_sign(selected_var_idx);
     beta_hist(:, i) = beta;
     beta_sum(i) = sum(abs(beta));
   end
+  keyboard
 
 end
