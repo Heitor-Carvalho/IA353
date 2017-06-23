@@ -1,5 +1,5 @@
-function [beta_hist, beta_sum] = lars(W, d)
-% [beta_hist, beta_sum] = lars(W, d) - Least Angle Regression algorithm
+function [beta_hist, beta_sum, W, d] = lars(H, t)
+% [beta_hist, beta_sum] = lars(H, t) - Least Angle Regression algorithm
 % find the regression coeficients moving in the least angle
 % direction. The variables became equally correlated with the residual
 % at each step.
@@ -7,15 +7,15 @@ function [beta_hist, beta_sum] = lars(W, d)
 % paper notation.
 %
 % Inputs:
-%  W - Data matrix, each collumn represents a variable and
+%  H - Data matrix, each collumn represents a variable and
 % each line a sample of this variable set
-%  d - Regreesion target valeu 
+%  t - Regreesion target valeu 
 %
 % Outputs: 
 %  beta_hist - beta values progression
 %  beta_sum  - sum of beta coefitients
 %
-  [W, d] = variables_normalize(W, d);
+  [W, d, avg, var_energy] = variables_normalize(H, t);
   
   mu = zeros(size(W,1), 1);
   beta = zeros(size(W,2), 1);
@@ -59,5 +59,4 @@ function [beta_hist, beta_sum] = lars(W, d)
     beta_hist(:, i) = beta;
     beta_sum(i) = sum(abs(beta));
   end
-
 end

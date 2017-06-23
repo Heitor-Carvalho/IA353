@@ -1,19 +1,19 @@
-function [beta_hist, beta_sum] = lars_lasso(W, d)
-% [beta_hist, beta_sum] = lars_lasso(W, d) - Least Angle Regression algorithm
+function [beta_hist, beta_sum, W, d] = lars_lasso(H, t)
+% [beta_hist, beta_sum] = lars_lasso(H, t) - Least Angle Regression algorithm
 % fmodified to find the LASSO solution. 
 % This implementation follows the paper 2004 Least Angle Regression 
 % paper notation.
 %
 % Inputs:
-%  W - Data matrix, each collumn represents a variable and
+%  H - Data matrix, each collumn represents a variable and
 % each line a sample of this variable set
-%  d - Regreesion target valeu 
+%  t - Regreesion target valeu 
 %
 % Outputs: 
 %  beta_hist - beta values progression
 %  beta_sum  - sum of beta coefitients
 %
-  [W, d] = variables_normalize(W, d);
+  [W, d] = variables_normalize(H, t);
   
   mu = zeros(size(W,1), 1);
   beta = zeros(size(W,2), 1);
