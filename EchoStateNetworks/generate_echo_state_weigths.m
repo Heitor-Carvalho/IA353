@@ -28,10 +28,10 @@ function [Win, Wfb, Wall] = generate_echo_state_weigths(input_par, feedback_par)
 %   Wall: Combined Win and Wfb matrix
 
   if(isfield(input_par, 'sparseness'))
-    Win = full(sprand(input_par.sz(1), input_par.sz(2), input_par.sparseness));
+    Win = full(sprand(input_par.sz(1)+1, input_par.sz(2), input_par.sparseness));
     Win(Win ~= 0) = 2*(Win(Win ~= 0) - 1)*input_par.range;
   else
-    Win = 2*rand(input_par.sz(1), input_par.sz(2))-1;
+    Win = 2*rand(input_par.sz(1)+1, input_par.sz(2))-1;
   end
   
   if(isfield(feedback_par, 'sparseness'))
@@ -48,7 +48,6 @@ function [Win, Wfb, Wall] = generate_echo_state_weigths(input_par, feedback_par)
     Wfb = Wfb/max(abs(lambdas));
     Wfb = Wfb*feedback_par.alpha;
   end
- 
   Wall = [Win; Wfb];
 
 end

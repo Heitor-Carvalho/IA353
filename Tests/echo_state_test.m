@@ -25,7 +25,7 @@ feedback_par.alpha = 0.95;
 
 % Setup training network
 clear nn
-nn.v = [ones(1, net_middle_sz); Weigths];
+nn.v = Weigths;
 nn.b = 0;
 nn.func = @tanh;
 nn = neuro_net_init(nn);
