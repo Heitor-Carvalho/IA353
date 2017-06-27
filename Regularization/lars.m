@@ -1,5 +1,5 @@
-function [beta_hist, beta_sum, W, d] = lars(H, t)
-% [beta_hist, beta_sum] = lars(H, t) - Least Angle Regression algorithm
+function [beta_hist, beta_sum, W, d] = lars(H, t, unorm)
+% [beta_hist, beta_sum, W, d] = lars(H, t, unorm) - Least Angle Regression algorithm
 % find the regression coeficients moving in the least angle
 % direction. The variables became equally correlated with the residual
 % at each step.
@@ -10,10 +10,14 @@ function [beta_hist, beta_sum, W, d] = lars(H, t)
 %  H - Data matrix, each collumn represents a variable and
 % each line a sample of this variable set
 %  t - Regreesion target valeu 
+%  unnorm - If one, return beta in the original data scale,
+% in this case is necessary to add a collumn of ones in the matrix data.
 %
 % Outputs: 
-%  beta_hist - beta values progression
-%  beta_sum  - sum of beta coefitients
+%  W - Normalized data matrix
+%  d - Normalized target value
+%  beta_hist - beta values progression based in the normalized data
+%  beta_sum  - sum of normalized beta coefitients
 %
   [W, d, avg, var_energy] = variables_normalize(H, t);
   
@@ -59,4 +63,11 @@ function [beta_hist, beta_sum, W, d] = lars(H, t)
     beta_hist(:, i) = beta;
     beta_sum(i) = sum(abs(beta));
   end
+
+  if(unorm)
+    beta_h_scaled = beta_hist./sqrt(var_energy');
+    beta_hist = [mean(t)-avg*beta_h_scaled; beta_h_scaled];
+    beta_sum = sum(beta_hist, 1);
+  end 
+
 end
