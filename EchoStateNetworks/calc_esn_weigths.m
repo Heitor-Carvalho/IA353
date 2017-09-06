@@ -1,4 +1,4 @@
-function [w] = calc_esn_weigths(in, target, reg_fact, nn_feedback)
+function [w, H] = calc_esn_weigths(in, target, reg_fact, nn_feedback)
 % [w] = calc_esn_weigths(in, target, reg_fact, nn_feedback)
 % This function calculates the output weights of the neural network.
 % 
@@ -13,6 +13,7 @@ function [w] = calc_esn_weigths(in, target, reg_fact, nn_feedback)
 %
 % Output:
 %  w - Output weights
+%  H - Output regression matrix
  
   % Calculating the target sample size
   samples_sz = length(target);
