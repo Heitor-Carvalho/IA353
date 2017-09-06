@@ -5,7 +5,7 @@ addpath('../Kernels/')
 
 % Generating linear equalizer data
 test_size = 1e4;
-train_size = 1e3;
+train_size = 5e2;
 
 % Equalizer channel
 h = [0.5 1];
@@ -22,7 +22,7 @@ channel_output_test = filter(h, 1, bpsk_input_test);
 net_in_sz = 1;
 
 % Network - Middle layer size 
-net_middle_sz = 40;
+net_middle_sz = 5;
 
 % Network - Output layer size
 net_out_sz = 1;
@@ -55,15 +55,30 @@ target_train = bpsk_input_train;
 test = channel_output_test;
 target_test = bpsk_input_test;
 
-reg_factor = 0;
+reg_factor = 1e-7;
+
+% Removing not used bias term
 [~, H_train] = calc_esn_weigths(train, target_train, reg_factor, nn);
 [~, H_test] = calc_esn_weigths(test, target_test, reg_factor, nn);
 
-kernel_train = poly_kernel(H_train, H_train, 1, 1, 3);
-kernel_test = poly_kernel(H_test, H_train, 1, 1, 3);
+% Removing initial samples from data
+init_samples = 50;
+H_train = H_train(init_samples:end, 2:end);
+H_test = H_test(init_samples:end, 2:end);
+target_train = target_train(init_samples:end);
+target_test = target_test(init_samples:end);
 
-kernel_coef = pinv(kernel_train + reg_factor*eye(size(kernel_train)))*target_train';
+%kernel_train = poly_kernel(H_train, H_train, 1, 1, 3);
+%kernel_test = poly_kernel(H_test, H_train, 1, 1, 3);
+
+%kernel_train = linear_kernel(H_train, H_train);
+%kernel_test = linear_kernel(H_test, H_train);
+
+kernel_train = rbf_kernel(H_train, H_train, 1);
+kernel_test = rbf_kernel(H_test, H_train, 1);
+
+kernel_coef = (kernel_train + reg_factor*eye(size(kernel_train)))\target_train';
 
 estimated_test_data = kernel_test*kernel_coef;
 
-errors = sum(sign(estimated_test_data - target_test'))/test_size;
+errors = sum(sign(estimated_test_data) != target_test')/(test_size-init_samples);
