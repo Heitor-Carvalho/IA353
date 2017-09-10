@@ -1,5 +1,5 @@
-function [beta_hist, beta_sum, W, d] = lars_lasso(H, t, unorm)
-% [beta_hist, beta_sum, W, d] = lars_lasso(H, t, unorm) - Least Angle Regression algorithm
+function [beta_hist, beta_sum, W, d] = lars_lasso(H, t, unorm, max_components)
+% [beta_hist, beta_sum, W, d] = lars_lasso(H, t, unorm, max_components) - Least Angle Regression algorithm
 % fmodified to find the LASSO solution. 
 % This implementation follows the paper 2004 Least Angle Regression 
 % paper notation.
@@ -10,6 +10,7 @@ function [beta_hist, beta_sum, W, d] = lars_lasso(H, t, unorm)
 %  t - Regreesion target valeu
 %  unnorm - If one, return beta in the original data scale, 
 % in this case is necessary to add a collumn of ones in the matrix data.  
+% max_components - Maximun number of components
 %
 % Outputs: 
 %  W - Normalized data matrix
@@ -35,7 +36,7 @@ function [beta_hist, beta_sum, W, d] = lars_lasso(H, t, unorm)
   end_lasso = 1;
 
   i = 2;
-  while(end_lasso) 
+  while(end_lasso && sum(selected_var_idx) <= max_components) 
     residual = d - mu;
     correlations = W'*residual;
     correlations_sign = sign(correlations);
@@ -44,7 +45,7 @@ function [beta_hist, beta_sum, W, d] = lars_lasso(H, t, unorm)
 
     % Calculating equiangular vector (vector equiangular with the collumns of W)
     G = Xa'*Xa;
-    Ginv = inv(G);
+    Ginv = pinv(G);
     A = 1/sqrt(sum(Ginv(:)));
     w = A*sum(Ginv,2);
     u = Xa*w;
@@ -80,7 +81,6 @@ function [beta_hist, beta_sum, W, d] = lars_lasso(H, t, unorm)
         end_lasso = 0;
       end
     end 
-
     mu = mu + gamma*u;
     
     beta_hist(:, i) = beta;
@@ -90,7 +90,7 @@ function [beta_hist, beta_sum, W, d] = lars_lasso(H, t, unorm)
   end
   
   if(unorm)
-    beta_h_scaled = beta_hist./sqrt(var_energy');
+    beta_h_scaled = beta_hist./repmat(sqrt(var_energy'), 1, size(beta_hist, 2));
     beta_hist = [mean(t)-avg*beta_h_scaled; beta_h_scaled];
     beta_sum = sum(beta_hist, 1);
   end 

@@ -5,7 +5,7 @@ addpath('../Kernels/')
 
 % Generating linear equalizer data
 test_size = 1e4;
-train_size = 5e2;
+train_size = 2000;
 
 % Equalizer channel
 h = [0.5 1];
@@ -44,6 +44,7 @@ feedback_par.alpha = 0.95;
 clear nn
 nn.v = Weigths;
 nn.b = 0;
+%nn.func = @tanh;
 nn.func = @tanh;
 nn = neuro_net_init(nn);
 
@@ -68,17 +69,24 @@ H_test = H_test(init_samples:end, 2:end);
 target_train = target_train(init_samples:end);
 target_test = target_test(init_samples:end);
 
-%kernel_train = poly_kernel(H_train, H_train, 1, 1, 3);
-%kernel_test = poly_kernel(H_test, H_train, 1, 1, 3);
-
-%kernel_train = linear_kernel(H_train, H_train);
-%kernel_test = linear_kernel(H_test, H_train);
-
-kernel_train = rbf_kernel(H_train, H_train, 1);
-kernel_test = rbf_kernel(H_test, H_train, 1);
+gamma = 1;
+kernel_train = rbf_kernel(H_train, H_train, gamma);
+% kernel_train = linear_kernel(H_train, H_train);
+% kernel_train = poly_kernel(H_train, H_train, 1, 1, 3);
 
 kernel_coef = (kernel_train + reg_factor*eye(size(kernel_train)))\target_train';
+% Ideias - Usar norma L1 para deixar coeficientes sparsos
+% Ideias - Limitar numero de vetor supportes da SVR
+errors = 0;
+tested_bits = 0;
+block_sz = floor((test_size-init_samples)*0.01);
+for i = 1:floor(size(target_test, 2)/block_sz)
+%   kernel_test = linear_kernel(H_test(((i-1)*block_sz + 1):(i*block_sz), :), kernel_train);
+  kernel_test = rbf_kernel(H_test(((i-1)*block_sz + 1):(i*block_sz), :), H_train, gamma);
+%   kernel_test = poly_kernel(H_test, kernel_train, 1, 1, 3);
+  estimated_test_data = kernel_test*kernel_coef;
+  errors = errors + sum(sign(estimated_test_data) ~= target_test(((i-1)*block_sz + 1):(i*block_sz))');
+  tested_bits = tested_bits + block_sz;
+end
 
-estimated_test_data = kernel_test*kernel_coef;
-
-errors = sum(sign(estimated_test_data) != target_test')/(test_size-init_samples);
+ber = errors/tested_bits
